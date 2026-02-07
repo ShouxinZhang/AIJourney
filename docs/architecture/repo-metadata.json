@@ -14,7 +14,7 @@
     ],
     "generateMdDepth": 2
   },
-  "updatedAt": "2026-02-07T06:27:03.224Z",
+  "updatedAt": "2026-02-07T07:28:06.023Z",
   "nodes": {
     ".agents": {
       "type": "directory",
@@ -120,6 +120,14 @@
       "updatedBy": "llm",
       "updatedAt": "2026-02-07T06:09:36.647Z"
     },
+    ".gitignore": {
+      "type": "file",
+      "description": "仓库级 Git 忽略规则（本地配置/垃圾桶/依赖）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:57:37.595Z"
+    },
     "AGENTS.md": {
       "type": "file",
       "description": "AI Agent 行为规范（全局自定义指令）",
@@ -135,6 +143,22 @@
       "tags": [],
       "updatedBy": "llm",
       "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "README.md": {
+      "type": "file",
+      "description": "项目说明文档（英文）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:57:37.595Z"
+    },
+    "README.zh-CN.md": {
+      "type": "file",
+      "description": "项目说明文档（中文）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:57:37.595Z"
     },
     "docs": {
       "type": "directory",
@@ -263,6 +287,14 @@
       "tags": [],
       "updatedBy": "human",
       "updatedAt": "2026-02-07T06:27:03.223Z"
+    },
+    "scripts/repo-metadata/package-lock.json": {
+      "type": "file",
+      "description": "repo-metadata Node 依赖锁定文件",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:57:37.595Z"
     },
     "scripts/repo-metadata/package.json": {
       "type": "file",
@@ -456,6 +488,142 @@
       "updatedBy": "llm",
       "updatedAt": "2026-02-07T06:09:36.647Z"
     },
+    "web/src/features": {
+      "type": "directory",
+      "description": "前端功能模块目录",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:57:37.595Z"
+    },
+    "web/src/features/knowledge": {
+      "type": "directory",
+      "description": "知识图谱功能模块",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:57:37.595Z"
+    },
+    "web/src/features/knowledge/KnowledgeGraphFeature.tsx": {
+      "type": "file",
+      "description": "知识图谱主功能组件",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:57:37.595Z"
+    },
+    "web/src/features/knowledge/constants.ts": {
+      "type": "file",
+      "description": "知识图谱常量定义",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:57:37.595Z"
+    },
+    "web/src/features/knowledge/hooks": {
+      "type": "directory",
+      "description": "知识图谱状态 Hooks",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:57:37.595Z"
+    },
+    "web/src/features/knowledge/hooks/useKnowledgeGraphState.ts": {
+      "type": "file",
+      "description": "知识图谱状态管理 Hook",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:57:37.595Z"
+    },
+    "web/src/features/knowledge/index.ts": {
+      "type": "file",
+      "description": "知识图谱模块统一导出",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:57:37.595Z"
+    },
+    "web/src/features/knowledge/model": {
+      "type": "directory",
+      "description": "图谱数据与布局模型",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:57:37.595Z"
+    },
+    "web/src/features/knowledge/model/graph-layout.ts": {
+      "type": "file",
+      "description": "图谱布局计算逻辑",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:57:37.595Z"
+    },
+    "web/src/features/knowledge/model/tree-index.ts": {
+      "type": "file",
+      "description": "树结构索引构建逻辑",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:57:37.595Z"
+    },
+    "web/src/features/knowledge/types.ts": {
+      "type": "file",
+      "description": "知识图谱类型定义",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:57:37.595Z"
+    },
+    "web/src/features/knowledge/ui": {
+      "type": "directory",
+      "description": "知识图谱 UI 子组件目录",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:57:37.595Z"
+    },
+    "web/src/features/knowledge/ui/CenterPanel.tsx": {
+      "type": "file",
+      "description": "中央图谱展示面板",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:57:37.595Z"
+    },
+    "web/src/features/knowledge/ui/DetailPanel.tsx": {
+      "type": "file",
+      "description": "节点详情展示面板",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:57:37.595Z"
+    },
+    "web/src/features/knowledge/ui/FolderPanel.tsx": {
+      "type": "file",
+      "description": "文件夹视图面板",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:57:37.595Z"
+    },
+    "web/src/features/knowledge/ui/KnowledgeFlowNode.tsx": {
+      "type": "file",
+      "description": "图谱节点渲染组件",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:57:37.595Z"
+    },
+    "web/src/features/knowledge/ui/nodeTypes.ts": {
+      "type": "file",
+      "description": "节点类型映射配置",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:57:37.595Z"
+    },
     "web/src/index.css": {
       "type": "file",
       "description": "全局样式 (Tailwind + Google Fonts)",
@@ -503,6 +671,14 @@
       "tags": [],
       "updatedBy": "llm",
       "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/tools/knowledge-sync/dev-api.mjs": {
+      "type": "file",
+      "description": "知识同步本地开发 API 脚本",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:57:37.595Z"
     },
     "web/tools/knowledge-sync/scripts": {
       "type": "directory",

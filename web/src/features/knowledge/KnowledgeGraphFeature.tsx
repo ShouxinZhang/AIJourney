@@ -1,5 +1,5 @@
 import '@xyflow/react/dist/style.css';
-import { useCallback, useEffect, useState, type MouseEvent } from 'react';
+import { useCallback, useEffect, useRef, useState, type MouseEvent } from 'react';
 import { knowledgeTree } from '../../data/knowledge-tree';
 import { useKnowledgeGraphState } from './hooks/useKnowledgeGraphState';
 import { DetailPanel } from './ui/DetailPanel';
@@ -56,12 +56,19 @@ export default function KnowledgeGraphFeature() {
   );
 
   const [contextMenu, setContextMenu] = useState<FolderContextMenuState | null>(null);
+  const contextMenuRef = useRef<HTMLDivElement | null>(null);
   const isLocalEditable = import.meta.env.DEV;
 
   useEffect(() => {
     if (!contextMenu) return undefined;
 
-    const onGlobalMouseDown = () => setContextMenu(null);
+    const onGlobalMouseDown = (event: globalThis.MouseEvent) => {
+      const target = event.target;
+      if (target instanceof Node && contextMenuRef.current?.contains(target)) {
+        return;
+      }
+      setContextMenu(null);
+    };
     const onEsc = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setContextMenu(null);
@@ -237,6 +244,7 @@ export default function KnowledgeGraphFeature() {
 
       {contextMenu && (
         <div
+          ref={contextMenuRef}
           className="fixed z-50 min-w-44 rounded-lg border bg-white shadow-lg p-1"
           style={{
             left: Math.min(contextMenu.x, window.innerWidth - 210),

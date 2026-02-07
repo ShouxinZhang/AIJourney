@@ -7,6 +7,8 @@ description: 开发日志记录规范。每次完成代码修改后，必须使�
 
 每次开发任务完成后，你必须在 `docs/dev_logs/` 下创建或追加开发日志。日志具有数据库快照属性，支持后续回滚。
 
+> 隐私策略：开发日志中禁止写入明文敏感信息（数据库连接串、密码、token、私有地址等）；敏感信息统一记录到本地私有模块 `docs/private_context/`，日志仅写引用标识。
+
 ## 目录与文件命名
 
 ```
@@ -82,6 +84,29 @@ docs/dev_logs/{YYYY-MM-DD}/{序号}-{简短描述}.md
 - ✔ Vite 生产构建通过
 ```
 
+### 7. Git 锚点
+
+用于后续快速回放到对应代码状态。至少包含：
+- `branch`：当前分支
+- `commit`：本轮对应提交哈希（未提交则写 `N/A` 并说明原因）
+- `tag/backup`：如创建了检查点标签或备份分支需写明
+
+示例：
+
+```markdown
+## Git 锚点
+- branch: `main`
+- commit: `abc1234`
+- tag: `checkpoint/2026-02-07-knowledge-trash`
+```
+
+### 8. 隐私信息引用（按需）
+
+当本轮涉及敏感信息时，必须记录引用而非明文：
+- 日志中写 `privacy_ref`，例如：`privacy_ref: docs/private_context/refs.local.md#db-sync-20260207`
+- 具体敏感值放到本地 `docs/private_context/`（该目录默认不入库）
+- 禁止在日志正文、命令行示例中出现完整连接串/密码/token
+
 ## 执行流程
 
 1. 完成代码修改后，立即检查 `docs/dev_logs/{今天日期}/` 目录
@@ -89,3 +114,5 @@ docs/dev_logs/{YYYY-MM-DD}/{序号}-{简短描述}.md
 3. 创建日志文件，按上述模板填写所有必需内容
 4. **用户 Prompt 必须原文记录，不可省略或摘要；LLM 回答用 1-2 句话概括核心结论**
 5. 文件修改时间从 git 或实际操作时间获取，精确到秒
+6. 填写 Git 锚点（branch/commit/tag）；未提交需说明原因
+7. 敏感信息检查：若包含凭据/连接信息，改写为 `privacy_ref` 并把明文移入 `docs/private_context/`

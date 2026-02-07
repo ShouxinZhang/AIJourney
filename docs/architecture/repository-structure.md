@@ -13,7 +13,8 @@ AIJourney/
 ├── docs/                                    # 项目文档（架构、知识库、开发日志）
 │   ├── architecture/                        # 架构文档与仓库元数据
 │   ├── dev_logs/                            # 开发日志（按日期归档）
-│   └── knowledge/                           # 叶子节点 Markdown 知识库（本地编辑）
+│   ├── knowledge/                           # 叶子节点 Markdown 知识库（本地编辑）
+│   └── private_context/                     # 本地隐私信息模块（日志仅写引用，敏感明文本地保存）
 ├── scripts/                                 # 构建与运维脚本
 │   ├── repo-metadata/                       # 仓库元数据管理系统（扫描/CRUD/PG同步/生成架构文档）
 │   ├── check_errors.sh                      # 全链路构建检查 (TSC + ESLint + Vite Build)
@@ -27,10 +28,13 @@ AIJourney/
 │   ├── package.json                         # 依赖管理与 npm 脚本
 │   ├── tsconfig.json                        # TypeScript 配置
 │   └── vite.config.ts                       # Vite 构建配置
-├── .gitignore                               # 仓库级 Git 忽略规则（本地配置/垃圾桶/依赖）
 ├── .gitattributes                           # Git 属性配置
+├── .gitignore                               # 仓库级 Git 忽略规则（本地配置/垃圾桶/依赖）
 ├── AGENTS.md                                # AI Agent 行为规范（全局自定义指令）
-└── LICENSE                                  # 项目许可证
+├── AGENTS.zh-CN.md                          # AI Agent 行为规范（中文审核版）
+├── LICENSE                                  # 项目许可证
+├── README.md                                # 项目说明文档（英文）
+└── README.zh-CN.md                          # 项目说明文档（中文）
 ```
 <!-- REPO-TREE-END -->
 
@@ -59,6 +63,7 @@ AIJourney/
 | `build-check` | 代码修改后，运行全链路构建检查 |
 | `knowledge-tree-update` | 添加/修改知识节点时的数据规范 |
 | `repo-structure-sync` | 文件结构变化后，同步架构文档 |
+| `git-management` | 阶段性成果或大改动前后的 Git 保护点与提交节奏管理 |
 
 ## 知识图谱类别
 

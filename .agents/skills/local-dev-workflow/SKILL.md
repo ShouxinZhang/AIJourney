@@ -1,6 +1,6 @@
 ---
 name: local-dev-workflow
-description: 本地开发全链路 SOP。接到任何开发任务时，按此流程从需求理解到 Git 提交完整执行，串联所有子 Skills 形成闭环。
+description: 本地开发全链路 SOP。接到任何开发任务时，按此流程从需求理解到 Git 管理完整执行，串联所有子 Skills 形成闭环。
 ---
 
 # 本地开发全链路工作流
@@ -10,7 +10,7 @@ description: 本地开发全链路 SOP。接到任何开发任务时，按此流
 ## 完整流程
 
 ```
-接收需求 → 理解现有代码 → 方案对齐 → 编码实现 → 本地预览 → 质量门禁 → 架构文档同步 → 开发日志 → Git 提交
+接收需求 → 理解现有代码 → 方案对齐 → 编码实现 → 本地预览 → 质量门禁 → 架构文档同步 → 开发日志 → Git 管理
 ```
 
 ---
@@ -19,9 +19,12 @@ description: 本地开发全链路 SOP。接到任何开发任务时，按此流
 
 **做什么**：读取项目规范和现有架构，理解上下文。
 
-必读文件：
+必读：
 - `AGENTS.md` — 行为规范、正负面 Prompt
-- `docs/architecture/repository-structure.md` — 当前架构和目录结构
+- 与任务相关模块说明（优先通过 MCP 按目标模块/叶子节点读取）
+
+兜底读取（仅在下列场景触发）：
+- `docs/architecture/repository-structure.md` — 当变更范围不清晰、MCP 不可用、或涉及跨模块影响评估时
 
 可选读取（按需）：
 - 相关功能的现有源代码
@@ -141,35 +144,19 @@ cd web && npm run test
 
 ---
 
-### Step 8：Git 提交
+### Step 8：Git 管理
 
-**做什么**：将所有变更提交到版本库。
+**做什么**：根据任务风险使用 `git-management` skill 管理提交节奏和保护点。
 
-```bash
-git add -A
-git commit -m "<type>: <简短描述>"
-```
+→ **调用 `git-management` skill**
 
-Commit Message 规范：
+最小要求：
+- 有阶段性成果或准备大改动时，必须执行 Git 保护点/提交动作
+- 若产生 commit，必须把分支名与 commit hash 回写到本轮开发日志
 
-| type | 场景 |
-|------|------|
-| `feat` | 新功能 |
-| `fix` | Bug 修复 |
-| `docs` | 文档变更 |
-| `refactor` | 重构（不改功能） |
-| `style` | 样式/格式调整 |
-| `chore` | 构建/工具变更 |
-| `test` | 测试相关 |
-
-示例：
-```
-feat: 添加知识图谱依赖关系视图
-fix: 修复节点展开后颜色丢失问题
-docs: 新增本地开发全链路 skill
-```
-
-**完成标志**：`git status` 显示 working tree clean。
+**完成标志**：
+- 完成了符合风险级别的 Git 保护（提交/备份分支/检查点标签）
+- 开发日志已记录 Git 锚点（branch / commit / tag）
 
 > 💡 只做 commit，是否 push 由用户决定。如用户要求了 push，执行 `git push`。
 
@@ -186,7 +173,7 @@ docs: 新增本地开发全链路 skill
 | 5 | 质量门禁 | ❌ | `build-check` |
 | 6 | 架构文档同步 | ✅ 无文件结构变化可跳 | `repo-structure-sync` |
 | 7 | 开发日志 | ❌ | `dev-logs` |
-| 8 | Git 提交 | ❌ | — |
+| 8 | Git 管理 | ❌ | `git-management` |
 
 ## 异常处理
 
