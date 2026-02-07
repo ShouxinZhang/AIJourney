@@ -17,6 +17,7 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import ReactMarkdown from 'react-markdown';
+import type { Components } from 'react-markdown';
 import { knowledgeTree, type KnowledgeNode } from '../data/knowledge-tree';
 
 /* ── 布局常量 ── */
@@ -351,6 +352,8 @@ export default function KnowledgeGraph() {
     () => (selectedNodeId ? childrenById.get(selectedNodeId) ?? [] : []),
     [childrenById, selectedNodeId],
   );
+  const isLeafSelected = !!selectedNode && directDependencyIds.length === 0;
+  const hasReadableContent = Boolean(selectedNode?.content?.trim());
 
   const descendantCount = useMemo(
     () => (selectedNodeId ? countDescendants(selectedNodeId, childrenById) : 0),
@@ -389,6 +392,26 @@ export default function KnowledgeGraph() {
       }
     },
     [toggleExpand],
+  );
+
+  const markdownComponents = useMemo<Components>(
+    () => ({
+      code(props) {
+        const { className, children, ...rest } = props;
+        const text = String(children).replace(/\n$/, '');
+        if (!className) {
+          return <code {...rest}>{children}</code>;
+        }
+        return (
+          <pre>
+            <code className={className} {...rest}>
+              {text}
+            </code>
+          </pre>
+        );
+      },
+    }),
+    [],
   );
 
   return (
@@ -499,7 +522,7 @@ export default function KnowledgeGraph() {
             <div className="h-full flex flex-col">
               <div className="px-5 py-4 border-b" style={{ borderColor: '#f4ebde', background: '#fffaf1' }}>
                 <p className="text-xs uppercase tracking-wide" style={{ color: '#8a7363' }}>
-                  当前目录
+                  {isLeafSelected ? '在线文档' : '当前目录'}
                 </p>
                 <h3 className="text-lg font-semibold mt-1" style={{ color: '#3d2c1e' }}>
                   {selectedNode?.label ?? '未选择节点'}
@@ -512,7 +535,17 @@ export default function KnowledgeGraph() {
               </div>
 
               <div className="flex-1 overflow-auto p-4">
-                {directDependencyIds.length > 0 ? (
+                {isLeafSelected ? (
+                  hasReadableContent ? (
+                    <article className="knowledge-markdown knowledge-markdown-article rounded-xl border bg-white px-5 py-4" style={{ borderColor: '#f0e4d4' }}>
+                      <ReactMarkdown components={markdownComponents}>{selectedNode?.content ?? ''}</ReactMarkdown>
+                    </article>
+                  ) : (
+                    <div className="h-full flex items-center justify-center text-sm" style={{ color: '#8a7363' }}>
+                      当前叶子节点暂无文档内容
+                    </div>
+                  )
+                ) : directDependencyIds.length > 0 ? (
                   <div className="space-y-2">
                     {directDependencyIds.map((childId) => {
                       const child = nodeById.get(childId);
@@ -620,34 +653,14 @@ export default function KnowledgeGraph() {
                   )}
                 </div>
 
-                {selectedNode.content && (
-                  <div className="rounded-xl border px-3 py-2.5" style={{ borderColor: '#f0e4d4', background: '#ffffff' }}>
-                    <div className="text-xs uppercase tracking-wide" style={{ color: '#8a7363' }}>
-                      在线阅读
-                    </div>
-                    <div className="mt-2 max-h-56 overflow-auto knowledge-markdown text-xs">
-                      <ReactMarkdown
-                        components={{
-                          code({ className, children, ...props }) {
-                            const text = String(children).replace(/\n$/, '');
-                            if (!className) {
-                              return <code {...props}>{children}</code>;
-                            }
-                            return (
-                              <pre>
-                                <code className={className} {...props}>
-                                  {text}
-                                </code>
-                              </pre>
-                            );
-                          },
-                        }}
-                      >
-                        {selectedNode.content}
-                      </ReactMarkdown>
-                    </div>
+                <div className="rounded-xl border px-3 py-2.5" style={{ borderColor: '#f0e4d4', background: '#ffffff' }}>
+                  <div className="text-xs" style={{ color: '#8a7363' }}>
+                    阅读状态
                   </div>
-                )}
+                  <div className="mt-1 text-sm font-medium" style={{ color: '#3d2c1e' }}>
+                    {isLeafSelected ? (hasReadableContent ? '可在线阅读' : '待补充文档') : '请选择叶子节点阅读正文'}
+                  </div>
+                </div>
 
                 <div className="rounded-xl border px-3 py-2.5" style={{ borderColor: `${selectedNodeColor}4d`, background: '#fffdf8' }}>
                   <div className="text-xs" style={{ color: '#8a7363' }}>

@@ -109,3 +109,23 @@ body {
   border: 0;
   padding: 0;
 }
+
+.knowledge-markdown-article {
+  font-size: 0.95rem;
+  line-height: 1.8;
+}
+
+.knowledge-markdown-article h1 {
+  font-size: 1.45rem;
+  margin-top: 0;
+}
+
+.knowledge-markdown-article h2 {
+  font-size: 1.2rem;
+  margin-top: 1.05rem;
+}
+
+.knowledge-markdown-article h3 {
+  font-size: 1.05rem;
+  margin-top: 0.85rem;
+}
