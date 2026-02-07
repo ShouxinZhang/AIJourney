@@ -10,12 +10,22 @@
     "preview": "vite preview",
     "check": "bash ../scripts/check_errors.sh",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "knowledge:bootstrap": "node ./tools/knowledge-sync/scripts/bootstrap-read-model-from-legacy-tree.mjs",
+    "knowledge:export-md": "node ./tools/knowledge-sync/scripts/export-leaf-markdown.mjs",
+    "knowledge:sync-md-to-db": "node ./tools/knowledge-sync/scripts/sync-markdown-to-postgres.mjs",
+    "knowledge:import-db": "node ./tools/knowledge-sync/scripts/import-read-model-to-postgres.mjs",
+    "knowledge:sync": "node ./tools/knowledge-sync/scripts/sync-read-model.mjs",
+    "knowledge:publish-read": "npm run knowledge:sync-md-to-db && npm run knowledge:sync",
+    "knowledge:node": "node ./tools/knowledge-sync/scripts/crud-node.mjs",
+    "knowledge:doc": "node ./tools/knowledge-sync/scripts/crud-doc.mjs"
   },
   "dependencies": {
     "@xyflow/react": "^12.8.2",
+    "pg": "^8.18.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "react-markdown": "^10.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",

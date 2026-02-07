@@ -1,0 +1,648 @@
+{
+  "meta": {
+    "generatedAt": "2026-02-07T05:31:38.506Z",
+    "source": "postgres-markdown-sync"
+  },
+  "tree": [
+    {
+      "id": "vibe-coding",
+      "label": "Vibe Coding Skills",
+      "description": "AI辅助编程技能 — 用自然语言驱动开发",
+      "color": "#f97316",
+      "children": [
+        {
+          "id": "vc-prompt-engineering",
+          "label": "Prompt Engineering",
+          "description": "编写高质量的代码生成提示词",
+          "color": "#f97316",
+          "children": [
+            {
+              "id": "vc-pe-context",
+              "label": "Context 设定",
+              "description": "在让 AI 产出可落地代码之前，先提供真实业务背景、目标模块边界和可变更范围，可以显著降低返工成本。",
+              "color": "#f97316",
+              "docPath": "vibe-coding/vc-pe-context.md",
+              "content": "# Context 设定\n\n## 摘要\n\n在让 AI 产出可落地代码之前，先提供真实业务背景、目标模块边界和可变更范围，可以显著降低返工成本。\n\n## 详细内容\n\n### 业务背景\n\n在 Vibe Coding 场景下，AI 往往能快速给出“看起来能跑”的代码，但如果上下文信息不完整，产物通常不符合真实业务约束，例如：改错模块、破坏既有接口、忽略数据一致性。\n\n### 实施要点\n\n- 明确任务目标：先告诉 AI 这是“修复问题”“加功能”还是“做迁移脚本”。\n- 锁定修改边界：指定可以改哪些目录、哪些文件不允许动。\n- 给出系统约束：数据库、部署方式、上线模式（如本项目“本地编辑 + 线上只读”）。\n- 提供验收标准：包括构建命令、测试命令、页面行为预期。\n\n### 推荐提示模板\n\n```text\n目标：补齐本地 Markdown -> PostgreSQL -> read-model 的同步闭环\n边界：仅改 web/tools/knowledge-sync 与 web/src/data，禁止修改无关模块\n约束：线上只读，不新增在线编辑接口\n验收：check_errors/test/dev 全通过，read-model 能展示正文\n```\n\n### 风险与边界\n\n- 只给“想做什么”，不给“不能做什么”，AI容易越界改动。\n- 缺少验收标准时，结果可能“看着合理但无法上线”。\n- 上下文过长且无层次，会造成关键约束被淹没。\n"
+            },
+            {
+              "id": "vc-pe-constraints",
+              "label": "约束条件设置",
+              "description": "限定输出格式、语言、框架等",
+              "color": "#f97316",
+              "docPath": "vibe-coding/vc-pe-constraints.md",
+              "content": "# 约束条件设置\n\n## 摘要\n\n限定输出格式、语言、框架等\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "vc-pe-examples",
+              "label": "Few-shot 示例",
+              "description": "通过示例引导AI输出风格",
+              "color": "#f97316",
+              "docPath": "vibe-coding/vc-pe-examples.md",
+              "content": "# Few-shot 示例\n\n## 摘要\n\n通过示例引导AI输出风格\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "vc-pe-iterative",
+              "label": "迭代优化",
+              "description": "逐步细化需求，分步骤生成代码",
+              "color": "#f97316",
+              "docPath": "vibe-coding/vc-pe-iterative.md",
+              "content": "# 迭代优化\n\n## 摘要\n\n逐步细化需求，分步骤生成代码\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            }
+          ]
+        },
+        {
+          "id": "vc-copilot",
+          "label": "GitHub Copilot",
+          "description": "利用Copilot加速开发的技巧",
+          "color": "#f97316",
+          "children": [
+            {
+              "id": "vc-copilot-inline",
+              "label": "Inline Completion",
+              "description": "行内代码补全与Tab接受",
+              "color": "#f97316",
+              "docPath": "vibe-coding/vc-copilot-inline.md",
+              "content": "# Inline Completion\n\n## 摘要\n\n行内代码补全与Tab接受\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "vc-copilot-chat",
+              "label": "Copilot Chat",
+              "description": "对话式编程助手",
+              "color": "#f97316",
+              "docPath": "vibe-coding/vc-copilot-chat.md",
+              "content": "# Copilot Chat\n\n## 摘要\n\n对话式编程助手\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "vc-copilot-agent",
+              "label": "Agent Mode",
+              "description": "Agent Mode 的价值不在“自动写代码”，而在“自动串联步骤”：读代码、改代码、跑检查、补文档，形成可交付闭环。",
+              "color": "#f97316",
+              "docPath": "vibe-coding/vc-copilot-agent.md",
+              "content": "# Agent Mode\n\n## 摘要\n\nAgent Mode 的价值不在“自动写代码”，而在“自动串联步骤”：读代码、改代码、跑检查、补文档，形成可交付闭环。\n\n## 详细内容\n\n### 业务背景\n\n当任务跨越多个文件和步骤时，人工切换上下文成本很高。Agent Mode 通过连续执行把多步任务压缩为一个闭环，适合中等复杂度开发任务。\n\n### 适用场景\n\n- 需要同时改脚本、前端、文档。\n- 改动后必须跑构建和测试门禁。\n- 需要把过程沉淀到开发日志。\n\n### 管理建议\n\n- 任务先拆成最小可交付（MVP），避免一次性目标过大。\n- 明确“可改/不可改”目录，降低误改风险。\n- 每轮结束必须有可验证结果（命令输出、文件清单、风险点）。\n\n### 成本与收益\n\n- 收益：交付速度快、过程可追踪、重复动作可复用脚本。\n- 成本：需要前置规范（AGENTS、Skill、架构文档）才能稳定发挥。\n\n### 风险与边界\n\n- 无边界约束时，Agent 可能做“超出业务预期”的优化。\n- 若忽略验证环节，容易把隐性错误带到后续流程。\n"
+            },
+            {
+              "id": "vc-copilot-cli",
+              "label": "Copilot CLI",
+              "description": "命令行AI辅助",
+              "color": "#f97316",
+              "docPath": "vibe-coding/vc-copilot-cli.md",
+              "content": "# Copilot CLI\n\n## 摘要\n\n命令行AI辅助\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            }
+          ]
+        },
+        {
+          "id": "vc-agent-skills",
+          "label": "Agent Skills",
+          "description": "为Copilot创建可复用的技能模板",
+          "color": "#f97316",
+          "children": [
+            {
+              "id": "vc-as-skillmd",
+              "label": "SKILL.md 编写",
+              "description": "Skill 的本质是把“个人经验”固化为“可重复执行流程”，让团队交付质量更稳定。",
+              "color": "#f97316",
+              "docPath": "vibe-coding/vc-as-skillmd.md",
+              "content": "# SKILL.md 编写\n\n## 摘要\n\nSkill 的本质是把“个人经验”固化为“可重复执行流程”，让团队交付质量更稳定。\n\n## 详细内容\n\n### 业务背景\n\n单靠口头约定很难长期维持工程质量。Skill 文档把检查步骤、文档要求、交付标准固化下来，降低人员变动带来的质量波动。\n\n### 一个有效 Skill 应包含\n\n- 触发条件：什么情况下必须使用。\n- 目标产物：需要生成哪些文件、跑哪些命令。\n- 验证标准：什么叫完成，失败如何回退。\n- 边界约束：哪些行为禁止（例如跳过测试、漏写日志）。\n\n### 在本仓库的价值\n\n- `build-check`：保证每次改动都经过统一门禁。\n- `dev-logs`：让每次开发有可追踪记录。\n- `repo-structure-sync`：防止架构文档和实际目录脱节。\n\n### 风险与边界\n\n- Skill 太宽泛会执行漂移，太细碎会增加执行负担。\n- 如果不绑定验证命令，Skill 容易变成“文档装饰品”。\n"
+            },
+            {
+              "id": "vc-as-project",
+              "label": "Project Skills",
+              "description": "仓库级技能 (.github/skills/)",
+              "color": "#f97316",
+              "docPath": "vibe-coding/vc-as-project.md",
+              "content": "# Project Skills\n\n## 摘要\n\n仓库级技能 (.github/skills/)\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "vc-as-personal",
+              "label": "Personal Skills",
+              "description": "个人级技能 (~/.copilot/skills/)",
+              "color": "#f97316",
+              "docPath": "vibe-coding/vc-as-personal.md",
+              "content": "# Personal Skills\n\n## 摘要\n\n个人级技能 (~/.copilot/skills/)\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "vc-as-scripts",
+              "label": "脚本与资源",
+              "description": "为技能附带脚本和示例文件",
+              "color": "#f97316",
+              "docPath": "vibe-coding/vc-as-scripts.md",
+              "content": "# 脚本与资源\n\n## 摘要\n\n为技能附带脚本和示例文件\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "vc-as-instructions",
+              "label": "Custom Instructions",
+              "description": "仓库自定义指令 vs 技能的选择",
+              "color": "#f97316",
+              "docPath": "vibe-coding/vc-as-instructions.md",
+              "content": "# Custom Instructions\n\n## 摘要\n\n仓库自定义指令 vs 技能的选择\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            }
+          ]
+        },
+        {
+          "id": "vc-workflow",
+          "label": "开发工作流",
+          "description": "AI驱动的完整开发流程",
+          "color": "#f97316",
+          "children": [
+            {
+              "id": "vc-wf-planning",
+              "label": "需求拆解",
+              "description": "用AI辅助分解复杂任务",
+              "color": "#f97316",
+              "docPath": "vibe-coding/vc-wf-planning.md",
+              "content": "# 需求拆解\n\n## 摘要\n\n用AI辅助分解复杂任务\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "vc-wf-scaffolding",
+              "label": "项目脚手架",
+              "description": "AI生成项目初始结构",
+              "color": "#f97316",
+              "docPath": "vibe-coding/vc-wf-scaffolding.md",
+              "content": "# 项目脚手架\n\n## 摘要\n\nAI生成项目初始结构\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "vc-wf-testing",
+              "label": "自动测试生成",
+              "description": "测试不是补作业，而是交付保护网。AI 参与开发时，测试是防止“看起来没问题但上线出问题”的关键保障。",
+              "color": "#f97316",
+              "docPath": "vibe-coding/vc-wf-testing.md",
+              "content": "# 自动测试生成\n\n## 摘要\n\n测试不是补作业，而是交付保护网。AI 参与开发时，测试是防止“看起来没问题但上线出问题”的关键保障。\n\n## 详细内容\n\n### 业务背景\n\n在快速迭代中，需求和代码同时变化。若没有自动测试，回归成本会随着功能数量线性上升，最终拖慢发布节奏。\n\n### 在本项目的落地方式\n\n- 数据层变更后，运行 `npm run test` 保证知识树结构完整。\n- 同步脚本变更后，运行 `check_errors` 保证 TypeScript、Lint、Build 全通过。\n- 新增同步链路时，补“命令级验证”（脚本是否可重复执行、是否幂等）。\n\n### 指标建议\n\n- 构建通过率（Build Pass Rate）\n- 回归缺陷数（Regression Count）\n- 单次发布准备时间（Release Ready Time）\n\n### 风险与边界\n\n- 只测 happy path 会掩盖真实风险，尤其是数据同步脚本。\n- 测试与业务规则脱节时，会出现“测试通过但业务失败”。\n"
+            },
+            {
+              "id": "vc-wf-review",
+              "label": "Code Review",
+              "description": "AI辅助代码审查",
+              "color": "#f97316",
+              "docPath": "vibe-coding/vc-wf-review.md",
+              "content": "# Code Review\n\n## 摘要\n\nAI辅助代码审查\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "vc-wf-debug",
+              "label": "智能调试",
+              "description": "AI辅助定位和修复Bug",
+              "color": "#f97316",
+              "docPath": "vibe-coding/vc-wf-debug.md",
+              "content": "# 智能调试\n\n## 摘要\n\nAI辅助定位和修复Bug\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            }
+          ]
+        },
+        {
+          "id": "vc-best-practices",
+          "label": "最佳实践",
+          "description": "Vibe Coding 的关键原则",
+          "color": "#f97316",
+          "children": [
+            {
+              "id": "vc-bp-agents",
+              "label": "AGENTS.md",
+              "description": "项目级AI行为规范文件",
+              "color": "#f97316",
+              "docPath": "vibe-coding/vc-bp-agents.md",
+              "content": "# AGENTS.md\n\n## 摘要\n\n项目级AI行为规范文件\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "vc-bp-modular",
+              "label": "模块化设计",
+              "description": "模块化不是技术洁癖，而是业务降本：让改动可定位、可替换、可回滚，减少跨模块副作用。",
+              "color": "#f97316",
+              "docPath": "vibe-coding/vc-bp-modular.md",
+              "content": "# 模块化设计\n\n## 摘要\n\n模块化不是技术洁癖，而是业务降本：让改动可定位、可替换、可回滚，减少跨模块副作用。\n\n## 详细内容\n\n### 业务背景\n\n当知识系统同时包含前端展示、数据同步、文档管理时，若没有模块边界，小改动会引发大面积回归，维护成本快速失控。\n\n### 本项目的模块化策略\n\n- 展示层：`web/src/components/`\n- 读取层：`web/src/data/`\n- 同步层：`web/tools/knowledge-sync/`\n- 内容层：`docs/knowledge/`\n\n### 设计原则\n\n- 同步逻辑只放在 `knowledge-sync` 子模块，不渗透到 UI。\n- 线上只读模型统一由 `read-model.json` 提供。\n- 本地编辑只改 Markdown 与数据库，不直接手改前端数据文件。\n\n### 风险与边界\n\n- 模块边界模糊时，后续双向同步会非常难做冲突治理。\n- 把实验代码放到高层目录会增加长期迁移成本。\n"
+            },
+            {
+              "id": "vc-bp-docs",
+              "label": "文档驱动",
+              "description": "良好的文档让AI更高效",
+              "color": "#f97316",
+              "docPath": "vibe-coding/vc-bp-docs.md",
+              "content": "# 文档驱动\n\n## 摘要\n\n良好的文档让AI更高效\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "vc-bp-verify",
+              "label": "验证与测试",
+              "description": "始终验证AI生成的代码",
+              "color": "#f97316",
+              "docPath": "vibe-coding/vc-bp-verify.md",
+              "content": "# 验证与测试\n\n## 摘要\n\n始终验证AI生成的代码\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "agent-dev",
+      "label": "Agent Dev",
+      "description": "AI Agent 开发 — 构建自主智能体",
+      "color": "#22c55e",
+      "children": [
+        {
+          "id": "ad-fundamentals",
+          "label": "Agent 基础概念",
+          "description": "Agent 的核心理论与设计",
+          "color": "#22c55e",
+          "children": [
+            {
+              "id": "ad-fund-what",
+              "label": "什么是 Agent",
+              "description": "感知-思考-行动的自主循环",
+              "color": "#22c55e",
+              "docPath": "agent-dev/ad-fund-what.md",
+              "content": "# 什么是 Agent\n\n## 摘要\n\n感知-思考-行动的自主循环\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "ad-fund-arch",
+              "label": "Agent 架构",
+              "description": "ReAct / Plan-and-Execute / 反射",
+              "color": "#22c55e",
+              "docPath": "agent-dev/ad-fund-arch.md",
+              "content": "# Agent 架构\n\n## 摘要\n\nReAct / Plan-and-Execute / 反射\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "ad-fund-memory",
+              "label": "记忆系统",
+              "description": "短期记忆、长期记忆、外部存储",
+              "color": "#22c55e",
+              "docPath": "agent-dev/ad-fund-memory.md",
+              "content": "# 记忆系统\n\n## 摘要\n\n短期记忆、长期记忆、外部存储\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "ad-fund-planning",
+              "label": "规划能力",
+              "description": "任务分解与子目标管理",
+              "color": "#22c55e",
+              "docPath": "agent-dev/ad-fund-planning.md",
+              "content": "# 规划能力\n\n## 摘要\n\n任务分解与子目标管理\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            }
+          ]
+        },
+        {
+          "id": "ad-tools",
+          "label": "Tool Use",
+          "description": "Agent 的工具调用能力",
+          "color": "#22c55e",
+          "children": [
+            {
+              "id": "ad-tools-fc",
+              "label": "Function Calling",
+              "description": "LLM 结构化工具调用",
+              "color": "#22c55e",
+              "docPath": "agent-dev/ad-tools-fc.md",
+              "content": "# Function Calling\n\n## 摘要\n\nLLM 结构化工具调用\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "ad-tools-mcp",
+              "label": "MCP (Model Context Protocol)",
+              "description": "统一的工具连接协议",
+              "color": "#22c55e",
+              "docPath": "agent-dev/ad-tools-mcp.md",
+              "content": "# MCP (Model Context Protocol)\n\n## 摘要\n\n统一的工具连接协议\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "ad-tools-api",
+              "label": "API 集成",
+              "description": "连接外部服务和数据源",
+              "color": "#22c55e",
+              "docPath": "agent-dev/ad-tools-api.md",
+              "content": "# API 集成\n\n## 摘要\n\n连接外部服务和数据源\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "ad-tools-code",
+              "label": "Code Interpreter",
+              "description": "代码执行沙箱能力",
+              "color": "#22c55e",
+              "docPath": "agent-dev/ad-tools-code.md",
+              "content": "# Code Interpreter\n\n## 摘要\n\n代码执行沙箱能力\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            }
+          ]
+        },
+        {
+          "id": "ad-frameworks",
+          "label": "开发框架",
+          "description": "主流 Agent 开发框架",
+          "color": "#22c55e",
+          "children": [
+            {
+              "id": "ad-fw-langchain",
+              "label": "LangChain / LangGraph",
+              "description": "链式调用与图状态流",
+              "color": "#22c55e",
+              "docPath": "agent-dev/ad-fw-langchain.md",
+              "content": "# LangChain / LangGraph\n\n## 摘要\n\n链式调用与图状态流\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "ad-fw-crewai",
+              "label": "CrewAI",
+              "description": "多Agent协作框架",
+              "color": "#22c55e",
+              "docPath": "agent-dev/ad-fw-crewai.md",
+              "content": "# CrewAI\n\n## 摘要\n\n多Agent协作框架\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "ad-fw-autogen",
+              "label": "AutoGen",
+              "description": "微软多Agent对话框架",
+              "color": "#22c55e",
+              "docPath": "agent-dev/ad-fw-autogen.md",
+              "content": "# AutoGen\n\n## 摘要\n\n微软多Agent对话框架\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "ad-fw-openai-sdk",
+              "label": "OpenAI Agents SDK",
+              "description": "OpenAI官方Agent SDK",
+              "color": "#22c55e",
+              "docPath": "agent-dev/ad-fw-openai-sdk.md",
+              "content": "# OpenAI Agents SDK\n\n## 摘要\n\nOpenAI官方Agent SDK\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            }
+          ]
+        },
+        {
+          "id": "ad-multi-agent",
+          "label": "多 Agent 系统",
+          "description": "多个Agent协作完成复杂任务",
+          "color": "#22c55e",
+          "children": [
+            {
+              "id": "ad-ma-orchestration",
+              "label": "编排模式",
+              "description": "中心调度 vs 去中心化协作",
+              "color": "#22c55e",
+              "docPath": "agent-dev/ad-ma-orchestration.md",
+              "content": "# 编排模式\n\n## 摘要\n\n中心调度 vs 去中心化协作\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "ad-ma-communication",
+              "label": "Agent 通信",
+              "description": "消息传递与共享状态",
+              "color": "#22c55e",
+              "docPath": "agent-dev/ad-ma-communication.md",
+              "content": "# Agent 通信\n\n## 摘要\n\n消息传递与共享状态\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "ad-ma-roles",
+              "label": "角色分工",
+              "description": "专业化Agent的任务分配",
+              "color": "#22c55e",
+              "docPath": "agent-dev/ad-ma-roles.md",
+              "content": "# 角色分工\n\n## 摘要\n\n专业化Agent的任务分配\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "ad-ma-evaluation",
+              "label": "评估与监控",
+              "description": "Agent 行为的可观测性",
+              "color": "#22c55e",
+              "docPath": "agent-dev/ad-ma-evaluation.md",
+              "content": "# 评估与监控\n\n## 摘要\n\nAgent 行为的可观测性\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            }
+          ]
+        },
+        {
+          "id": "ad-rag",
+          "label": "RAG (检索增强生成)",
+          "description": "让Agent访问自有知识库",
+          "color": "#22c55e",
+          "children": [
+            {
+              "id": "ad-rag-embedding",
+              "label": "Embedding 模型",
+              "description": "文本向量化表示",
+              "color": "#22c55e",
+              "docPath": "agent-dev/ad-rag-embedding.md",
+              "content": "# Embedding 模型\n\n## 摘要\n\n文本向量化表示\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "ad-rag-vectordb",
+              "label": "向量数据库",
+              "description": "Pinecone / Chroma / Weaviate",
+              "color": "#22c55e",
+              "docPath": "agent-dev/ad-rag-vectordb.md",
+              "content": "# 向量数据库\n\n## 摘要\n\nPinecone / Chroma / Weaviate\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "ad-rag-chunking",
+              "label": "文档分块",
+              "description": "智能文档切分策略",
+              "color": "#22c55e",
+              "docPath": "agent-dev/ad-rag-chunking.md",
+              "content": "# 文档分块\n\n## 摘要\n\n智能文档切分策略\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "ad-rag-retrieval",
+              "label": "检索策略",
+              "description": "相似度搜索与重排序",
+              "color": "#22c55e",
+              "docPath": "agent-dev/ad-rag-retrieval.md",
+              "content": "# 检索策略\n\n## 摘要\n\n相似度搜索与重排序\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "llm-fundamental",
+      "label": "LLM Fundamental",
+      "description": "大语言模型基础 — 理解AI的核心引擎",
+      "color": "#a855f7",
+      "children": [
+        {
+          "id": "llm-architecture",
+          "label": "Transformer 架构",
+          "description": "LLM 的核心神经网络结构",
+          "color": "#a855f7",
+          "children": [
+            {
+              "id": "llm-arch-attention",
+              "label": "Self-Attention",
+              "description": "自注意力机制的工作原理",
+              "color": "#a855f7",
+              "docPath": "llm-fundamental/llm-arch-attention.md",
+              "content": "# Self-Attention\n\n## 摘要\n\n自注意力机制的工作原理\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "llm-arch-positional",
+              "label": "位置编码",
+              "description": "序列位置信息的注入方式",
+              "color": "#a855f7",
+              "docPath": "llm-fundamental/llm-arch-positional.md",
+              "content": "# 位置编码\n\n## 摘要\n\n序列位置信息的注入方式\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "llm-arch-ffn",
+              "label": "FFN 前馈网络",
+              "description": "特征变换与非线性映射",
+              "color": "#a855f7",
+              "docPath": "llm-fundamental/llm-arch-ffn.md",
+              "content": "# FFN 前馈网络\n\n## 摘要\n\n特征变换与非线性映射\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "llm-arch-norm",
+              "label": "Layer Norm",
+              "description": "训练稳定性的归一化技术",
+              "color": "#a855f7",
+              "docPath": "llm-fundamental/llm-arch-norm.md",
+              "content": "# Layer Norm\n\n## 摘要\n\n训练稳定性的归一化技术\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            }
+          ]
+        },
+        {
+          "id": "llm-training",
+          "label": "训练方法",
+          "description": "模型的训练过程与技术",
+          "color": "#a855f7",
+          "children": [
+            {
+              "id": "llm-train-pretrain",
+              "label": "预训练 (Pre-training)",
+              "description": "大规模无监督语言建模",
+              "color": "#a855f7",
+              "docPath": "llm-fundamental/llm-train-pretrain.md",
+              "content": "# 预训练 (Pre-training)\n\n## 摘要\n\n大规模无监督语言建模\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "llm-train-sft",
+              "label": "SFT (监督微调)",
+              "description": "基于标注数据的指令跟随训练",
+              "color": "#a855f7",
+              "docPath": "llm-fundamental/llm-train-sft.md",
+              "content": "# SFT (监督微调)\n\n## 摘要\n\n基于标注数据的指令跟随训练\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "llm-train-rlhf",
+              "label": "RLHF",
+              "description": "人类反馈强化学习对齐",
+              "color": "#a855f7",
+              "docPath": "llm-fundamental/llm-train-rlhf.md",
+              "content": "# RLHF\n\n## 摘要\n\n人类反馈强化学习对齐\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "llm-train-dpo",
+              "label": "DPO",
+              "description": "直接偏好优化，RLHF的简化替代",
+              "color": "#a855f7",
+              "docPath": "llm-fundamental/llm-train-dpo.md",
+              "content": "# DPO\n\n## 摘要\n\n直接偏好优化，RLHF的简化替代\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            }
+          ]
+        },
+        {
+          "id": "llm-inference",
+          "label": "推理与部署",
+          "description": "模型的高效推理技术",
+          "color": "#a855f7",
+          "children": [
+            {
+              "id": "llm-inf-quantization",
+              "label": "量化 (Quantization)",
+              "description": "INT8/INT4 降低显存占用",
+              "color": "#a855f7",
+              "docPath": "llm-fundamental/llm-inf-quantization.md",
+              "content": "# 量化 (Quantization)\n\n## 摘要\n\nINT8/INT4 降低显存占用\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "llm-inf-kvcache",
+              "label": "KV Cache",
+              "description": "键值缓存加速自回归生成",
+              "color": "#a855f7",
+              "docPath": "llm-fundamental/llm-inf-kvcache.md",
+              "content": "# KV Cache\n\n## 摘要\n\n键值缓存加速自回归生成\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "llm-inf-batching",
+              "label": "Continuous Batching",
+              "description": "动态批处理提升吞吐量",
+              "color": "#a855f7",
+              "docPath": "llm-fundamental/llm-inf-batching.md",
+              "content": "# Continuous Batching\n\n## 摘要\n\n动态批处理提升吞吐量\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "llm-inf-speculative",
+              "label": "Speculative Decoding",
+              "description": "投机采样加速生成",
+              "color": "#a855f7",
+              "docPath": "llm-fundamental/llm-inf-speculative.md",
+              "content": "# Speculative Decoding\n\n## 摘要\n\n投机采样加速生成\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            }
+          ]
+        },
+        {
+          "id": "llm-prompting",
+          "label": "提示工程",
+          "description": "与LLM高效交互的技术",
+          "color": "#a855f7",
+          "children": [
+            {
+              "id": "llm-prompt-cot",
+              "label": "Chain-of-Thought",
+              "description": "链式思考提升推理能力",
+              "color": "#a855f7",
+              "docPath": "llm-fundamental/llm-prompt-cot.md",
+              "content": "# Chain-of-Thought\n\n## 摘要\n\n链式思考提升推理能力\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "llm-prompt-fewshot",
+              "label": "Few-shot Learning",
+              "description": "少量示例引导输出",
+              "color": "#a855f7",
+              "docPath": "llm-fundamental/llm-prompt-fewshot.md",
+              "content": "# Few-shot Learning\n\n## 摘要\n\n少量示例引导输出\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "llm-prompt-system",
+              "label": "System Prompt",
+              "description": "系统提示词设定角色和行为",
+              "color": "#a855f7",
+              "docPath": "llm-fundamental/llm-prompt-system.md",
+              "content": "# System Prompt\n\n## 摘要\n\n系统提示词设定角色和行为\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "llm-prompt-structured",
+              "label": "结构化输出",
+              "description": "JSON/XML 格式化输出控制",
+              "color": "#a855f7",
+              "docPath": "llm-fundamental/llm-prompt-structured.md",
+              "content": "# 结构化输出\n\n## 摘要\n\nJSON/XML 格式化输出控制\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            }
+          ]
+        },
+        {
+          "id": "llm-models",
+          "label": "主流模型",
+          "description": "了解各大LLM的特点与差异",
+          "color": "#a855f7",
+          "children": [
+            {
+              "id": "llm-model-gpt",
+              "label": "GPT 系列",
+              "description": "OpenAI GPT-4o / o1 / o3",
+              "color": "#a855f7",
+              "docPath": "llm-fundamental/llm-model-gpt.md",
+              "content": "# GPT 系列\n\n## 摘要\n\nOpenAI GPT-4o / o1 / o3\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "llm-model-claude",
+              "label": "Claude 系列",
+              "description": "Anthropic Claude Opus/Sonnet",
+              "color": "#a855f7",
+              "docPath": "llm-fundamental/llm-model-claude.md",
+              "content": "# Claude 系列\n\n## 摘要\n\nAnthropic Claude Opus/Sonnet\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "llm-model-gemini",
+              "label": "Gemini 系列",
+              "description": "Google Gemini Pro / Ultra",
+              "color": "#a855f7",
+              "docPath": "llm-fundamental/llm-model-gemini.md",
+              "content": "# Gemini 系列\n\n## 摘要\n\nGoogle Gemini Pro / Ultra\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            },
+            {
+              "id": "llm-model-open",
+              "label": "开源模型",
+              "description": "Llama / Qwen / DeepSeek / Mistral",
+              "color": "#a855f7",
+              "docPath": "llm-fundamental/llm-model-open.md",
+              "content": "# 开源模型\n\n## 摘要\n\nLlama / Qwen / DeepSeek / Mistral\n\n## 详细内容\n\n- 业务背景：待补充\n- 实施要点：待补充\n- 风险与边界：待补充\n"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

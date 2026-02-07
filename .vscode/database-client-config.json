@@ -1,0 +1,85 @@
+{
+    "database": {
+        "1770440594331": {
+            "host": "127.0.0.1",
+            "port": 5432,
+            "user": "postgres",
+            "password": "dbclient_a$tZXhzq6346+lTrp8fxjysQ==",
+            "dbType": "PostgreSQL",
+            "database": "ai_journey",
+            "name": "AIJourney-local",
+            "advance": {
+                "idleConfig": {
+                    "enable": true
+                },
+                "hideSystemSchema": true,
+                "groupingTables": false,
+                "loadMetaDataWhenExpandTreeView": true
+            },
+            "treeFeatures": [],
+            "useConnectionString": false,
+            "usingSSH": false,
+            "useSocksProxy": false,
+            "useHTTPProxy": false,
+            "ssh": {
+                "host": "",
+                "port": 22,
+                "username": "root",
+                "type": "auto",
+                "privateKeyPath": "",
+                "serverType": "linux",
+                "connectTimeout": 5000,
+                "algorithms": {
+                    "kex": [
+                        "ecdh-sha2-nistp256",
+                        "ecdh-sha2-nistp384",
+                        "ecdh-sha2-nistp521",
+                        "diffie-hellman-group-exchange-sha256",
+                        "diffie-hellman-group14-sha256",
+                        "diffie-hellman-group15-sha512",
+                        "diffie-hellman-group16-sha512",
+                        "diffie-hellman-group17-sha512",
+                        "diffie-hellman-group18-sha512",
+                        "diffie-hellman-group14-sha1",
+                        "diffie-hellman-group-exchange-sha1"
+                    ],
+                    "cipher": [
+                        "aes128-gcm@openssh.com",
+                        "aes256-gcm@openssh.com",
+                        "aes128-ctr",
+                        "aes192-ctr",
+                        "aes256-ctr"
+                    ],
+                    "serverHostKey": [
+                        "ssh-ed25519",
+                        "ecdsa-sha2-nistp256",
+                        "ecdsa-sha2-nistp384",
+                        "ecdsa-sha2-nistp521",
+                        "rsa-sha2-512",
+                        "rsa-sha2-256",
+                        "ssh-rsa",
+                        "ssh-dss"
+                    ]
+                },
+                "disableSFTP": false,
+                "pruneSFTPRoot": false
+            },
+            "httpProxy": {
+                "host": null,
+                "port": 3128
+            },
+            "global": false,
+            "savePassword": "Forever",
+            "readonly": false,
+            "sort": 17,
+            "useSSL": false,
+            "fs": {
+                "encoding": "utf8",
+                "showHidden": true
+            },
+            "key": "1770440594331",
+            "connectionKey": "database.connections"
+        }
+    },
+    "$schema": "https://cdn.database-client.com/dbclient/schema.json"
+}

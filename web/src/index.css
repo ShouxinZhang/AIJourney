@@ -45,3 +45,67 @@ body {
   border-radius: 12px !important;
   box-shadow: 0 2px 12px rgba(180, 140, 90, 0.1) !important;
 }
+
+.knowledge-markdown {
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+
+.knowledge-markdown h1,
+.knowledge-markdown h2,
+.knowledge-markdown h3 {
+  color: var(--text-primary);
+  font-weight: 700;
+  margin-top: 0.65rem;
+  margin-bottom: 0.4rem;
+}
+
+.knowledge-markdown h1 {
+  font-size: 1.05rem;
+}
+
+.knowledge-markdown h2 {
+  font-size: 0.95rem;
+}
+
+.knowledge-markdown h3 {
+  font-size: 0.88rem;
+}
+
+.knowledge-markdown ul,
+.knowledge-markdown ol {
+  padding-left: 1.1rem;
+  margin: 0.35rem 0;
+}
+
+.knowledge-markdown li {
+  margin: 0.15rem 0;
+}
+
+.knowledge-markdown p {
+  margin: 0.35rem 0;
+}
+
+.knowledge-markdown code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.75rem;
+  background: #f8f1e5;
+  border: 1px solid #f0e4d4;
+  border-radius: 6px;
+  padding: 0.1rem 0.35rem;
+}
+
+.knowledge-markdown pre {
+  margin: 0.45rem 0;
+  padding: 0.55rem 0.65rem;
+  background: #f8f1e5;
+  border: 1px solid #f0e4d4;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.knowledge-markdown pre code {
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
