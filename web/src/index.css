@@ -1,0 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  --bg-cream: #fefcf6;
+  --bg-warm: #fff8ee;
+  --text-primary: #3d2c1e;
+  --text-secondary: #7a6555;
+  --border-warm: #f0e4d4;
+  --orange: #f97316;
+  --green: #22c55e;
+  --purple: #a855f7;
+}
+
+body {
+  font-family: 'Inter', 'Noto Serif SC', system-ui, sans-serif;
+  background: var(--bg-cream);
+  color: var(--text-primary);
+}
+
+/* React Flow 白底适配 */
+.react-flow__background {
+  background: var(--bg-cream) !important;
+}
+.react-flow__edge-path {
+  stroke-linecap: round;
+}
+.react-flow__controls {
+  background: white !important;
+  border: 1px solid var(--border-warm) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 12px rgba(180, 140, 90, 0.1) !important;
+}
+.react-flow__controls button {
+  background: white !important;
+  border-color: var(--border-warm) !important;
+  color: var(--text-secondary) !important;
+}
+.react-flow__controls button:hover {
+  background: var(--bg-warm) !important;
+}
+.react-flow__minimap {
+  background: white !important;
+  border: 1px solid var(--border-warm) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 12px rgba(180, 140, 90, 0.1) !important;
+}
