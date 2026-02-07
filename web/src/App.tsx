@@ -1,5 +1,5 @@
-import KnowledgeGraph from './components/KnowledgeGraph';
+import { KnowledgeGraphFeature } from './features/knowledge';
 
 export default function App() {
-  return <KnowledgeGraph />;
+  return <KnowledgeGraphFeature />;
 }

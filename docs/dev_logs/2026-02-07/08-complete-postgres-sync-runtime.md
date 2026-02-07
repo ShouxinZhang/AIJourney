@@ -35,7 +35,7 @@
 
 ### 运行态结果
 
-- 探测到可用连接：`postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable`
+- 探测到可用连接（已迁移为隐私引用）：`privacy_ref: docs/private_context/refs.local.md#db-sync-20260207-pg-local-admin`
 - 创建业务库：`ai_journey`
 - 初始化完成：`knowledge_nodes` / `knowledge_dependencies`
 - 导入完成：节点 80，依赖 0
@@ -57,3 +57,7 @@
 - ✔ `bash scripts/check_errors.sh` 通过
 - ✔ `cd web && npm run test` 通过（6/6）
 - ✔ `cd web && timeout 20s npm run dev -- --host 127.0.0.1 --port 4173` 启动成功
+
+## 隐私信息引用
+
+- `privacy_ref: docs/private_context/refs.local.md#db-sync-20260207-pg-local-admin`

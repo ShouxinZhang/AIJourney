@@ -1,6 +1,13 @@
 import { DEFAULT_COLOR } from '../constants';
 import type { FolderRow, KnowledgeNode, TreeIndex } from '../types';
 
+function isFolderNode(node: KnowledgeNode): boolean {
+  if (node.kind === 'folder') return true;
+  if (node.kind === 'node') return false;
+  if (node.children?.length) return true;
+  return !node.docPath;
+}
+
 export function createTreeIndex(nodes: KnowledgeNode[]): TreeIndex {
   const nodeById = new Map<string, KnowledgeNode>();
   const parentById = new Map<string, string | null>();
@@ -42,6 +49,7 @@ export function buildVisibleRows(
       label: node.label,
       depth,
       hasChildren,
+      isFolder: isFolderNode(node),
       color: colorById.get(node.id) ?? DEFAULT_COLOR,
     });
 

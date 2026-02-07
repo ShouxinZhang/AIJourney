@@ -61,7 +61,7 @@ export function FolderPanel({
                   border: isSelected ? `1px solid ${row.color}4d` : '1px solid transparent',
                 }}
               >
-                <span>{row.hasChildren ? (isExpanded ? '📂' : '📁') : '📄'}</span>
+                <span>{row.isFolder ? (isExpanded ? '📂' : '📁') : '📄'}</span>
                 <span className="truncate">{row.label}</span>
               </button>
             </div>

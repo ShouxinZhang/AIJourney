@@ -63,11 +63,11 @@ AIJourney/
 git clone https://github.com/ShouxinZhang/AIJourney.git
 cd AIJourney
 
-# Install dependencies
-cd web && npm install
+# Install dependencies (workspace, one-time)
+npm install
 
 # Start dev server
-npm run dev
+npm run -w web dev
 ```
 
 ## How to Use

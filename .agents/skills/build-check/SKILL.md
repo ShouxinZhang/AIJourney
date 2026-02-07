@@ -16,7 +16,7 @@ bash scripts/check_errors.sh
 ```
 
 此命令依次执行：
-1. **依赖检查** — 确认 node_modules 存在，缺失时自动安装（有 lock 用 `npm ci`）
+1. **依赖检查** — 优先检查根 workspace 依赖；缺失时仅在仓库根目录安装一次（有 lock 用 `npm ci`），避免在 `web/` 与 `scripts/repo-metadata/` 重复安装 `node_modules`
 2. **TypeScript 类型检查** — `npx tsc --noEmit`
 3. **ESLint 代码规范** — `npx eslint . --max-warnings 0`
 4. **Vite 生产构建** — `npx vite build`

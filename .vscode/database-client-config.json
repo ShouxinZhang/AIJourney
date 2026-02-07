@@ -4,7 +4,7 @@
             "host": "127.0.0.1",
             "port": 5432,
             "user": "postgres",
-            "password": "dbclient_a$tZXhzq6346+lTrp8fxjysQ==",
+            "password": "<privacy_ref: docs/private_context/refs.local.md#vscode-dbclient-local-password>",
             "dbType": "PostgreSQL",
             "database": "ai_journey",
             "name": "AIJourney-local",

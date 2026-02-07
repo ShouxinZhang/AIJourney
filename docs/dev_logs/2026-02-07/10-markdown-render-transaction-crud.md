@@ -52,8 +52,12 @@
 - ✔ `bash scripts/check_errors.sh` 通过（TypeScript / ESLint / Vite Build 全通过）
 - ✔ `cd web && npm run test` 通过（6/6）
 - ✔ `cd web && timeout 20s npm run dev -- --host 127.0.0.1 --port 4173` 启动成功
-- ✔ `cd web && DATABASE_URL='postgresql://postgres:postgres@127.0.0.1:5432/ai_journey?sslmode=disable' npm run knowledge:sync-md-to-db` 通过（更新 0，跳过 62）
-- ✔ `cd web && DATABASE_URL='postgresql://postgres:postgres@127.0.0.1:5432/ai_journey?sslmode=disable' npm run knowledge:publish-read` 通过（节点 80，关系 0）
+- ✔ `cd web && DATABASE_URL='<privacy_ref: docs/private_context/refs.local.md#db-sync-20260207-pg-ai-journey>' npm run knowledge:sync-md-to-db` 通过（更新 0，跳过 62）
+- ✔ `cd web && DATABASE_URL='<privacy_ref: docs/private_context/refs.local.md#db-sync-20260207-pg-ai-journey>' npm run knowledge:publish-read` 通过（节点 80，关系 0）
 - ✔ 事务实测通过：
   - 创建：`knowledge:node -- create --id tx-test-1770442247 --parent-id vibe-coding` 自动生成 `docs/knowledge/vibe-coding/tx-test-1770442247.md`
   - 删除：`knowledge:node -- delete --id tx-test-1770442247` 自动归档到 `docs/knowledge/_archive/2026-02-07T05-30-47-921Z-30e649/vibe-coding/tx-test-1770442247.md`
+
+## 隐私信息引用
+
+- `privacy_ref: docs/private_context/refs.local.md#db-sync-20260207-pg-ai-journey`

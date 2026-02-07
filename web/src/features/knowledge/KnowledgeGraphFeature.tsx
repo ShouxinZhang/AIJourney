@@ -1,12 +1,17 @@
 import '@xyflow/react/dist/style.css';
 import { useCallback, useEffect, useRef, useState, type MouseEvent } from 'react';
 import { knowledgeTree } from '../../data/knowledge-tree';
+import { createKnowledgeNode, deleteKnowledgeNode } from './api/knowledge-api';
 import { useKnowledgeGraphState } from './hooks/useKnowledgeGraphState';
+import { appendChildNode, removeNode } from './model/tree-mutations';
 import { DetailPanel } from './ui/DetailPanel';
 import { FolderPanel } from './ui/FolderPanel';
 import { CenterPanel } from './ui/CenterPanel';
+import { FolderContextMenu } from './ui/context/FolderContextMenu';
+import { ConfirmDialog } from './ui/dialogs/ConfirmDialog';
+import { CreateNodeDialog } from './ui/dialogs/CreateNodeDialog';
 import { knowledgeNodeTypes } from './ui/nodeTypes';
-import type { FolderRow } from './types';
+import type { FolderRow, KnowledgeNode, NodeKind } from './types';
 
 interface FolderContextMenuState {
   x: number;
@@ -15,6 +20,7 @@ interface FolderContextMenuState {
 }
 
 export default function KnowledgeGraphFeature() {
+  const [tree, setTree] = useState<KnowledgeNode[]>(() => knowledgeTree);
   const {
     viewMode,
     setViewMode,
@@ -38,7 +44,7 @@ export default function KnowledgeGraphFeature() {
     nodeById,
     childrenById,
     colorById,
-  } = useKnowledgeGraphState(knowledgeTree);
+  } = useKnowledgeGraphState(tree);
 
   const getNodeLabel = useCallback(
     (nodeId: string) => nodeById.get(nodeId)?.label ?? nodeId,
@@ -56,6 +62,13 @@ export default function KnowledgeGraphFeature() {
   );
 
   const [contextMenu, setContextMenu] = useState<FolderContextMenuState | null>(null);
+  const [createTargetRow, setCreateTargetRow] = useState<FolderRow | null>(null);
+  const [createKind, setCreateKind] = useState<NodeKind>('node');
+  const [deleteTargetRow, setDeleteTargetRow] = useState<FolderRow | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const contextMenuRef = useRef<HTMLDivElement | null>(null);
   const isLocalEditable = import.meta.env.DEV;
 
@@ -83,52 +96,52 @@ export default function KnowledgeGraphFeature() {
     };
   }, [contextMenu]);
 
-  const callApi = useCallback(async (url: string, init: RequestInit, failedMessage: string) => {
-    const response = await fetch(url, init);
-    const payload = await response.json().catch(() => ({}));
-    if (!response.ok || payload?.ok === false) {
-      throw new Error(payload?.message || failedMessage);
-    }
-    return payload;
-  }, []);
-
-  const handleCreateChild = useCallback(async (row: FolderRow) => {
-    const label = window.prompt('请输入新节点名称');
-    if (!label || !label.trim()) return;
-
+  const handleCreateChild = useCallback(async (label: string) => {
+    if (!createTargetRow) return;
     try {
-      await callApi(
-        '/api/knowledge/nodes',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ label: label.trim(), parentId: row.id }),
-        },
-        '创建节点失败',
-      );
-      window.location.reload();
+      setIsCreating(true);
+      setCreateError(null);
+      const created = await createKnowledgeNode({
+        label: label.trim(),
+        parentId: createTargetRow.id,
+        kind: createKind,
+      });
+
+      setTree((prevTree) => appendChildNode(prevTree, {
+        id: created.id,
+        label: created.label,
+        kind: created.kind,
+        parentId: createTargetRow.id,
+        color: createTargetRow.color,
+      }));
+
+      if (!expanded.has(createTargetRow.id)) {
+        toggleExpand(createTargetRow.id);
+      }
+      setSelectedNodeId(created.id);
+      setCreateTargetRow(null);
+      setCreateKind('node');
     } catch (error) {
-      window.alert(`创建失败: ${error instanceof Error ? error.message : '未知错误'}`);
+      setCreateError(error instanceof Error ? error.message : '未知错误');
+    } finally {
+      setIsCreating(false);
     }
-  }, [callApi]);
+  }, [createKind, createTargetRow, expanded, setSelectedNodeId, toggleExpand]);
 
-  const handleDeleteToTrash = useCallback(async (row: FolderRow) => {
-    const confirmText = row.depth === 0
-      ? `确定要把根目录「${row.label}」删除到垃圾桶吗？`
-      : `确定要把「${row.label}」删除到垃圾桶吗？`;
-    if (!window.confirm(confirmText)) return;
-
+  const handleDeleteToTrash = useCallback(async () => {
+    if (!deleteTargetRow) return;
     try {
-      await callApi(
-        `/api/knowledge/nodes/${encodeURIComponent(row.id)}`,
-        { method: 'DELETE' },
-        '删除节点失败',
-      );
-      window.location.reload();
+      setIsDeleting(true);
+      setDeleteError(null);
+      await deleteKnowledgeNode(deleteTargetRow.id);
+      setTree((prevTree) => removeNode(prevTree, deleteTargetRow.id).tree);
+      setDeleteTargetRow(null);
     } catch (error) {
-      window.alert(`删除失败: ${error instanceof Error ? error.message : '未知错误'}`);
+      setDeleteError(error instanceof Error ? error.message : '未知错误');
+    } finally {
+      setIsDeleting(false);
     }
-  }, [callApi]);
+  }, [deleteTargetRow]);
 
   const handleRowContextMenu = useCallback((event: MouseEvent<HTMLButtonElement>, row: FolderRow) => {
     if (!isLocalEditable) return;
@@ -243,37 +256,72 @@ export default function KnowledgeGraphFeature() {
       </div>
 
       {contextMenu && (
-        <div
+        <FolderContextMenu
           ref={contextMenuRef}
-          className="fixed z-50 min-w-44 rounded-lg border bg-white shadow-lg p-1"
-          style={{
-            left: Math.min(contextMenu.x, window.innerWidth - 210),
-            top: Math.min(contextMenu.y, window.innerHeight - 120),
-            borderColor: '#f0e4d4',
+          x={contextMenu.x}
+          y={contextMenu.y}
+          row={contextMenu.row}
+          onCreateFolder={() => {
+            setContextMenu(null);
+            setCreateKind('folder');
+            setCreateError(null);
+            setCreateTargetRow(contextMenu.row);
           }}
-        >
-          <button
-            type="button"
-            className="w-full text-left px-3 py-2 text-sm rounded-md hover:bg-[#fff6ea]"
-            onClick={() => {
-              setContextMenu(null);
-              void handleCreateChild(contextMenu.row);
-            }}
-          >
-            新建子节点
-          </button>
-          <button
-            type="button"
-            className="w-full text-left px-3 py-2 text-sm rounded-md hover:bg-[#fff2ee] text-[#a54b2a]"
-            onClick={() => {
-              setContextMenu(null);
-              void handleDeleteToTrash(contextMenu.row);
-            }}
-          >
-            删除到垃圾桶
-          </button>
-        </div>
+          onCreateNode={() => {
+            setContextMenu(null);
+            setCreateKind('node');
+            setCreateError(null);
+            setCreateTargetRow(contextMenu.row);
+          }}
+          onDelete={() => {
+            setContextMenu(null);
+            setDeleteError(null);
+            setDeleteTargetRow(contextMenu.row);
+          }}
+        />
       )}
+
+      <CreateNodeDialog
+        open={!!createTargetRow}
+        mode={createKind}
+        parentLabel={createTargetRow?.label ?? ''}
+        accentColor={createTargetRow?.color}
+        isSubmitting={isCreating}
+        errorMessage={createError}
+        onCancel={() => {
+          if (isCreating) return;
+          setCreateTargetRow(null);
+          setCreateKind('node');
+          setCreateError(null);
+        }}
+        onSubmit={(label) => {
+          void handleCreateChild(label);
+        }}
+      />
+
+      <ConfirmDialog
+        open={!!deleteTargetRow}
+        title="删除到垃圾桶"
+        message={deleteTargetRow
+          ? deleteTargetRow.depth === 0
+            ? `确定要把根目录「${deleteTargetRow.label}」删除到垃圾桶吗？`
+            : `确定要把「${deleteTargetRow.label}」删除到垃圾桶吗？`
+          : ''
+        }
+        confirmLabel="删除节点"
+        cancelLabel="取消"
+        accentColor="#ef4444"
+        isSubmitting={isDeleting}
+        errorMessage={deleteError}
+        onCancel={() => {
+          if (isDeleting) return;
+          setDeleteTargetRow(null);
+          setDeleteError(null);
+        }}
+        onConfirm={() => {
+          void handleDeleteToTrash();
+        }}
+      />
     </div>
   );
 }

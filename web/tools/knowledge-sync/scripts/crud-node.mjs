@@ -2,6 +2,11 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Client } from 'pg';
+import {
+  ensureKnowledgeNodeColumns,
+  parseFlags,
+  safeResolveDocPath,
+} from './_shared.mjs';
 
 const databaseUrl = process.env.DATABASE_URL;
 
@@ -13,27 +18,6 @@ if (!databaseUrl) {
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(scriptDir, '../../../../');
 const docsRoot = path.join(repoRoot, 'docs', 'knowledge');
-
-function parseFlags(args) {
-  const flags = {};
-  for (let i = 0; i < args.length; i += 1) {
-    const token = args[i];
-    if (!token.startsWith('--')) {
-      continue;
-    }
-
-    const key = token.slice(2);
-    const next = args[i + 1];
-    if (!next || next.startsWith('--')) {
-      flags[key] = 'true';
-      continue;
-    }
-
-    flags[key] = next;
-    i += 1;
-  }
-  return flags;
-}
 
 function parseIntOrDefault(value, defaultValue = 0) {
   const parsed = Number.parseInt(value ?? '', 10);
@@ -48,7 +32,7 @@ function toBooleanFlag(value) {
 function printUsage() {
   console.log(`
 用法:
-  node crud-node.mjs create --id <id> --label <label> [--parent-id <id>] [--summary <text>] [--color <hex>] [--doc-path <path>] [--sort-order <n>] [--skip-doc true]
+  node crud-node.mjs create --id <id> --label <label> [--kind <folder|node>] [--parent-id <id>] [--summary <text>] [--color <hex>] [--doc-path <path>] [--sort-order <n>] [--skip-doc true]
   node crud-node.mjs update --id <id> [--label <label>] [--summary <text>] [--color <hex>] [--parent-id <id>] [--doc-path <path>] [--sort-order <n>]
   node crud-node.mjs delete --id <id>           # 删除到垃圾桶（软删除）
   node crud-node.mjs restore --id <id>          # 从垃圾桶恢复子树
@@ -56,33 +40,8 @@ function printUsage() {
 `);
 }
 
-function safeResolveDocPath(relativePath) {
-  const normalized = relativePath.replace(/\\/g, '/');
-  const absolute = path.resolve(docsRoot, normalized);
-  const docsRootWithSep = `${docsRoot}${path.sep}`;
-
-  if (!absolute.startsWith(docsRootWithSep)) {
-    throw new Error(`非法 doc_path（越界）: ${relativePath}`);
-  }
-
-  return absolute;
-}
-
 function templateMarkdown(title, summary) {
   return `# ${title}\n\n## 摘要\n\n${summary || '待补充'}\n\n## 详细内容\n\n- 业务背景：待补充\n- 关键步骤：待补充\n- 风险与边界：待补充\n`;
-}
-
-async function ensureColumns(client) {
-  await client.query(`
-    alter table knowledge_nodes
-      add column if not exists doc_markdown text,
-      add column if not exists doc_hash text,
-      add column if not exists doc_synced_at timestamptz,
-      add column if not exists is_trashed boolean not null default false,
-      add column if not exists trashed_at timestamptz,
-      add column if not exists trashed_parent_id text,
-      add column if not exists trash_tx_id text
-  `);
 }
 
 async function resolveRootId(client, parentId) {
@@ -123,7 +82,17 @@ async function createNode(client, flags) {
     throw new Error('create 需要 --id 与 --label');
   }
 
-  const skipDoc = toBooleanFlag(flags['skip-doc']);
+  const rawKind = String(flags.kind ?? 'node').trim().toLowerCase();
+  const kind = rawKind === 'folder' ? 'folder' : rawKind === 'node' ? 'node' : null;
+  if (!kind) {
+    throw new Error('create 的 --kind 仅支持 folder 或 node');
+  }
+
+  if (kind === 'folder' && flags['doc-path']) {
+    throw new Error('folder 类型不支持 --doc-path，请移除该参数');
+  }
+
+  const skipDoc = kind === 'folder' || toBooleanFlag(flags['skip-doc']);
   let createdDocAbsolutePath = null;
   let createdDocPath = null;
 
@@ -139,7 +108,7 @@ async function createNode(client, flags) {
       }
     }
 
-    const docPath = await resolveDocPath(client, flags);
+    const docPath = kind === 'folder' ? null : await resolveDocPath(client, flags);
     createdDocPath = docPath;
 
     await client.query(
@@ -159,7 +128,10 @@ async function createNode(client, flags) {
     );
 
     if (!skipDoc) {
-      const absolutePath = safeResolveDocPath(docPath);
+      if (!docPath) {
+        throw new Error('node 类型缺少 doc_path，无法创建文档');
+      }
+      const absolutePath = safeResolveDocPath(docsRoot, docPath);
       await fs.mkdir(path.dirname(absolutePath), { recursive: true });
 
       try {
@@ -177,9 +149,9 @@ async function createNode(client, flags) {
 
     await client.query('commit');
 
-    console.log(`✅ 已创建节点: ${flags.id}`);
+    console.log(`✅ 已创建${kind === 'folder' ? '文件夹' : '节点'}: ${flags.id}`);
     if (!skipDoc) {
-      console.log(`✅ 已创建文档: ${safeResolveDocPath(createdDocPath).replace(`${repoRoot}/`, '')}`);
+      console.log(`✅ 已创建文档: ${safeResolveDocPath(docsRoot, createdDocPath).replace(`${repoRoot}/`, '')}`);
     }
   } catch (error) {
     await client.query('rollback');
@@ -216,8 +188,8 @@ async function updateNode(client, flags) {
     await client.query('begin');
 
     if ('doc-path' in flags && current.doc_path && flags['doc-path'] && flags['doc-path'] !== current.doc_path) {
-      const oldPath = safeResolveDocPath(current.doc_path);
-      const newPath = safeResolveDocPath(flags['doc-path']);
+      const oldPath = safeResolveDocPath(docsRoot, current.doc_path);
+      const newPath = safeResolveDocPath(docsRoot, flags['doc-path']);
 
       try {
         await fs.access(oldPath);
@@ -298,7 +270,7 @@ async function moveDocsToTrash(client, rootNodeId, txId) {
   const movedDocs = [];
 
   for (const row of result.rows) {
-    const source = safeResolveDocPath(row.doc_path);
+    const source = safeResolveDocPath(docsRoot, row.doc_path);
     try {
       await fs.access(source);
     } catch {
@@ -306,7 +278,7 @@ async function moveDocsToTrash(client, rootNodeId, txId) {
     }
 
     const trashRelative = path.join('_trash', txId, row.doc_path).replace(/\\/g, '/');
-    const trash = safeResolveDocPath(trashRelative);
+    const trash = safeResolveDocPath(docsRoot, trashRelative);
 
     await fs.mkdir(path.dirname(trash), { recursive: true });
     await fs.rename(source, trash);
@@ -431,8 +403,8 @@ async function restoreNode(client, flags) {
     );
 
     for (const row of subtree.rows) {
-      const source = safeResolveDocPath(path.join('_trash', row.trash_tx_id, row.doc_path).replace(/\\/g, '/'));
-      const target = safeResolveDocPath(row.doc_path);
+      const source = safeResolveDocPath(docsRoot, path.join('_trash', row.trash_tx_id, row.doc_path).replace(/\\/g, '/'));
+      const target = safeResolveDocPath(docsRoot, row.doc_path);
       try {
         await fs.access(source);
       } catch {
@@ -518,7 +490,7 @@ async function main() {
   await client.connect();
 
   try {
-    await ensureColumns(client);
+    await ensureKnowledgeNodeColumns(client);
 
     if (command === 'create') {
       await createNode(client, flags);

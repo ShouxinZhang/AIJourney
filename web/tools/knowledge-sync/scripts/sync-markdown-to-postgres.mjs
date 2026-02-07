@@ -3,6 +3,11 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Client } from 'pg';
+import {
+  ensureKnowledgeNodeColumns,
+  pickSummaryFromMarkdown,
+  safeResolveDocPath,
+} from './_shared.mjs';
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(scriptDir, '../../../../');
@@ -14,41 +19,8 @@ if (!databaseUrl) {
   process.exit(1);
 }
 
-function safeResolveDocPath(relativePath) {
-  const normalized = relativePath.replace(/\\/g, '/');
-  const absolute = path.resolve(docsRoot, normalized);
-  const docsRootWithSep = `${docsRoot}${path.sep}`;
-
-  if (!absolute.startsWith(docsRootWithSep)) {
-    throw new Error(`非法 doc_path（越界）: ${relativePath}`);
-  }
-  return absolute;
-}
-
 function hashContent(content) {
   return crypto.createHash('sha256').update(content).digest('hex');
-}
-
-function pickSummaryFromMarkdown(markdown) {
-  const lines = markdown
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter((line) => line && !line.startsWith('#'));
-
-  return lines[0] ?? '';
-}
-
-async function ensureColumns(client) {
-  await client.query(`
-    alter table knowledge_nodes
-      add column if not exists doc_markdown text,
-      add column if not exists doc_hash text,
-      add column if not exists doc_synced_at timestamptz,
-      add column if not exists is_trashed boolean not null default false,
-      add column if not exists trashed_at timestamptz,
-      add column if not exists trashed_parent_id text,
-      add column if not exists trash_tx_id text
-  `);
 }
 
 async function main() {
@@ -60,7 +32,7 @@ async function main() {
   let missing = 0;
 
   try {
-    await ensureColumns(client);
+    await ensureKnowledgeNodeColumns(client);
 
     const result = await client.query(`
       select id, doc_path, doc_hash
@@ -77,7 +49,7 @@ async function main() {
     await client.query('begin');
 
     for (const row of result.rows) {
-      const absolutePath = safeResolveDocPath(row.doc_path);
+      const absolutePath = safeResolveDocPath(docsRoot, row.doc_path);
 
       let markdown;
       try {

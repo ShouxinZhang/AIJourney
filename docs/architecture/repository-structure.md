@@ -45,12 +45,15 @@ AIJourney/
 | React | ^19.1.0 | UI 框架 |
 | react-markdown | ^10.1.0 | 在线阅读 Markdown 渲染 |
 | TypeScript | ~5.8.3 | 类型安全 |
-| Vite | ^6.3.5 | 构建工具 |
+| Vite | ^7.3.1 | 构建工具 |
 | @xyflow/react | ^12.8.2 | 图/节点可视化 |
 | pg | ^8.18.0 | 本地 PostgreSQL 连接驱动（知识同步） |
 | Tailwind CSS | ^4.1.4 | 样式方案 |
 | ESLint | ^9.22.0 | 代码规范 |
 | Vitest | ^4.0.18 | 自动化测试 |
+| Madge | ^8.0.0 | 依赖关系图与循环依赖检查 |
+| @modelcontextprotocol/sdk | ^1.26.0 | MCP Server/Client 开发 SDK |
+| zod | ^4.3.6 | MCP Tool 参数 Schema 校验 |
 
 ## Agent Skills
 
@@ -64,6 +67,8 @@ AIJourney/
 | `knowledge-tree-update` | 添加/修改知识节点时的数据规范 |
 | `repo-structure-sync` | 文件结构变化后，同步架构文档 |
 | `git-management` | 阶段性成果或大改动前后的 Git 保护点与提交节奏管理 |
+| `dependency-review-system` | 依赖关系优先的 AI Review 总调度（机械门禁 + LLM 判读 + 人工兜底） |
+| `modularization-governance` | 模块化治理工作流（机械量化检查、问题码反馈、分治修复闭环） |
 
 ## 知识图谱类别
 
@@ -74,6 +79,17 @@ AIJourney/
 ## 开发命令
 
 ```bash
+# Workspace 依赖（全仓只安装一次）
+npm install
+
+# 前端开发（推荐）
+npm run -w web dev
+npm run -w web build
+npm run -w web lint
+npm run -w web test
+npm run review    # 一键执行机械 Review 链路（默认严格）
+
+# 传统进入 web 目录方式（兼容）
 cd web
 npm run dev       # 启动开发服务器
 npm run build     # 生产构建 (tsc + vite build)
@@ -107,6 +123,14 @@ bash scripts/check_errors.sh          # 全部检查
 bash scripts/check_errors.sh --tsc    # 仅 TypeScript
 bash scripts/check_errors.sh --lint   # 仅 ESLint
 bash scripts/check_errors.sh --build  # 仅构建
+
+# 自动化 Review（严格模式）
+bash scripts/review/run.sh
+bash scripts/review/run.sh --base main --head HEAD --llm-report scripts/review/input/llm-review.json
+
+# MCP Server（本地）
+node scripts/repo-metadata/mcp-server.mjs   # 仓库结构元数据 MCP
+node scripts/review/mcp-server.mjs          # Review 流水线 MCP
 ```
 
 ## 添加知识点
@@ -115,4 +139,4 @@ bash scripts/check_errors.sh --build  # 仅构建
 
 1. 在 PostgreSQL 的 `knowledge_nodes` / `knowledge_dependencies` 维护结构与关系  
 2. 在 `docs/knowledge/` 维护叶子节点 Markdown 正文（删除进入 `docs/knowledge/_trash/`）  
-3. 执行 `cd web && npm run knowledge:publish-read` 完成 “MD -> DB -> read-model” 同步链路  
+3. 执行 `npm run -w web knowledge:publish-read` 完成 “MD -> DB -> read-model” 同步链路  

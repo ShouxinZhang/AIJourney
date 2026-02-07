@@ -2,6 +2,11 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Client } from 'pg';
+import {
+  ensureKnowledgeNodeColumns,
+  pickSummaryFromMarkdown,
+  safeResolveDocPath,
+} from './_shared.mjs';
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(scriptDir, '../../../../');
@@ -12,26 +17,6 @@ const databaseUrl = process.env.DATABASE_URL;
 if (!databaseUrl) {
   console.error('❌ 缺少 DATABASE_URL，无法从 PostgreSQL 同步 read-model。');
   process.exit(1);
-}
-
-function safeResolveDocPath(relativePath) {
-  const normalized = relativePath.replace(/\\/g, '/');
-  const absolute = path.resolve(docsRoot, normalized);
-  const docsRootWithSep = `${docsRoot}${path.sep}`;
-
-  if (!absolute.startsWith(docsRootWithSep)) {
-    throw new Error(`非法 doc_path（越界）: ${relativePath}`);
-  }
-  return absolute;
-}
-
-function pickSummaryFromMarkdown(markdown) {
-  const lines = markdown
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter((line) => line && !line.startsWith('#'));
-
-  return lines[0] ?? '';
 }
 
 function ensureTreeValidity(records) {
@@ -78,19 +63,6 @@ function ensureTreeValidity(records) {
   }
 }
 
-async function ensureColumns(client) {
-  await client.query(`
-    alter table knowledge_nodes
-      add column if not exists doc_markdown text,
-      add column if not exists doc_hash text,
-      add column if not exists doc_synced_at timestamptz,
-      add column if not exists is_trashed boolean not null default false,
-      add column if not exists trashed_at timestamptz,
-      add column if not exists trashed_parent_id text,
-      add column if not exists trash_tx_id text
-  `);
-}
-
 async function loadNodeRows(client) {
   const result = await client.query(`
     select
@@ -132,7 +104,7 @@ async function loadDocFallbackByNodeId(records, childrenById) {
     }
 
     try {
-      const absolutePath = safeResolveDocPath(node.doc_path);
+      const absolutePath = safeResolveDocPath(docsRoot, node.doc_path);
       const markdown = await fs.readFile(absolutePath, 'utf8');
       const summary = pickSummaryFromMarkdown(markdown);
       fallbackById.set(node.id, { markdown, summary: summary || undefined });
@@ -175,6 +147,7 @@ async function buildTree(records, dependencies) {
     const row = byId.get(nodeId);
     const childrenIds = childrenById.get(nodeId) ?? [];
     const currentColor = row.color ?? inheritedColor;
+    const kind = childrenIds.length > 0 || !row.doc_path ? 'folder' : 'node';
 
     const fallback = docFallbackById.get(nodeId);
     const markdown = row.doc_markdown ?? fallback?.markdown;
@@ -183,6 +156,7 @@ async function buildTree(records, dependencies) {
     const next = {
       id: row.id,
       label: row.label,
+      kind,
       ...(description ? { description } : {}),
       ...(currentColor ? { color: currentColor } : {}),
       ...(row.doc_path ? { docPath: row.doc_path } : {}),
@@ -210,7 +184,7 @@ async function main() {
   await client.connect();
 
   try {
-    await ensureColumns(client);
+    await ensureKnowledgeNodeColumns(client);
 
     const [nodes, dependencies] = await Promise.all([
       loadNodeRows(client),

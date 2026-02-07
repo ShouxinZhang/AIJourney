@@ -1,0 +1,21 @@
+{
+  "name": "ai-journey-workspace",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "web",
+    "scripts/repo-metadata"
+  ],
+  "scripts": {
+    "dev": "npm run -w web dev",
+    "build": "npm run -w web build",
+    "lint": "npm run -w web lint",
+    "test": "npm run -w web test",
+    "check": "bash scripts/check_errors.sh",
+    "review": "bash scripts/review/run.sh"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.26.0",
+    "zod": "^4.3.6"
+  }
+}

@@ -44,6 +44,12 @@ export interface KnowledgeGraphState {
 }
 
 export function useKnowledgeGraphState(tree: KnowledgeNode[]): KnowledgeGraphState {
+  const isDocumentNode = useCallback((node: KnowledgeNode): boolean => {
+    if (node.kind === 'node') return true;
+    if (node.kind === 'folder') return false;
+    return Boolean(node.docPath);
+  }, []);
+
   const rootIds = useMemo(() => tree.map((node) => node.id), [tree]);
   const { nodeById, parentById, childrenById, colorById } = useMemo(() => createTreeIndex(tree), [tree]);
 
@@ -95,7 +101,7 @@ export function useKnowledgeGraphState(tree: KnowledgeNode[]): KnowledgeGraphSta
     () => (selectedNodeId ? childrenById.get(selectedNodeId) ?? [] : []),
     [childrenById, selectedNodeId],
   );
-  const isLeafSelected = !!selectedNode && directDependencyIds.length === 0;
+  const isLeafSelected = !!selectedNode && directDependencyIds.length === 0 && isDocumentNode(selectedNode);
   const hasReadableContent = Boolean(selectedNode?.content?.trim());
 
   const descendantCount = useMemo(

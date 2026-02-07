@@ -14,7 +14,7 @@
     ],
     "generateMdDepth": 2
   },
-  "updatedAt": "2026-02-07T07:28:06.023Z",
+  "updatedAt": "2026-02-07T20:55:08.243Z",
   "nodes": {
     ".agents": {
       "type": "directory",
@@ -64,6 +64,22 @@
       "updatedBy": "llm",
       "updatedAt": "2026-02-07T06:09:36.647Z"
     },
+    ".agents/skills/git-management": {
+      "type": "directory",
+      "description": "Git 管理规范 Skill 目录",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T08:11:02.846Z"
+    },
+    ".agents/skills/git-management/SKILL.md": {
+      "type": "file",
+      "description": "Git 管理规范：保护点、提交节奏、日志回写",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T08:11:02.846Z"
+    },
     ".agents/skills/knowledge-tree-update": {
       "type": "directory",
       "description": "知识图谱数据维护规范",
@@ -95,6 +111,70 @@
       "tags": [],
       "updatedBy": "llm",
       "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    ".agents/skills/modularization-governance": {
+      "type": "directory",
+      "description": "模块化治理 Skill 目录（机械量化检查与修复闭环）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T20:55:08.100Z"
+    },
+    ".agents/skills/modularization-governance/SKILL.md": {
+      "type": "file",
+      "description": "模块化治理机械化工作流定义（PASS/REFINE/BLOCK）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T20:55:08.121Z"
+    },
+    ".agents/skills/modularization-governance/references": {
+      "type": "directory",
+      "description": "模块化治理参考规则目录",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T20:55:08.139Z"
+    },
+    ".agents/skills/modularization-governance/references/modularity-policy.template.json": {
+      "type": "file",
+      "description": "模块化检查策略模板（层级与阈值）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T20:55:08.198Z"
+    },
+    ".agents/skills/modularization-governance/references/refactor-playbook.md": {
+      "type": "file",
+      "description": "问题码到最小重构动作映射手册",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T20:55:08.179Z"
+    },
+    ".agents/skills/modularization-governance/references/scorecard.md": {
+      "type": "file",
+      "description": "模块化机械规则说明（问题码与状态机）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T20:55:08.159Z"
+    },
+    ".agents/skills/modularization-governance/scripts": {
+      "type": "directory",
+      "description": "模块化检查脚本目录",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T20:55:08.221Z"
+    },
+    ".agents/skills/modularization-governance/scripts/check-modularity.mjs": {
+      "type": "file",
+      "description": "模块化机械检查脚本（输出结构化报告）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T20:55:08.242Z"
     },
     ".agents/skills/repo-structure-sync": {
       "type": "directory",
@@ -135,6 +215,14 @@
       "tags": [],
       "updatedBy": "llm",
       "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "AGENTS.zh-CN.md": {
+      "type": "file",
+      "description": "AI Agent 行为规范（中文审核版）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T08:11:02.846Z"
     },
     "LICENSE": {
       "type": "file",
@@ -248,6 +336,30 @@
       "updatedBy": "llm",
       "updatedAt": "2026-02-07T06:09:36.647Z"
     },
+    "docs/private_context": {
+      "type": "directory",
+      "description": "本地隐私信息模块（日志仅写引用，敏感明文本地保存）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T08:11:02.846Z"
+    },
+    "docs/private_context/.gitignore": {
+      "type": "file",
+      "description": "private_context 隐私文件忽略规则（默认全忽略）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T08:11:02.846Z"
+    },
+    "docs/private_context/README.md": {
+      "type": "file",
+      "description": "本地敏感信息记录规范与引用方式说明",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T08:11:02.846Z"
+    },
     "scripts": {
       "type": "directory",
       "description": "构建与运维脚本",
@@ -290,11 +402,11 @@
     },
     "scripts/repo-metadata/package-lock.json": {
       "type": "file",
-      "description": "repo-metadata Node 依赖锁定文件",
+      "description": "repo-metadata 子工作区依赖锁文件",
       "detail": "",
       "tags": [],
       "updatedBy": "llm",
-      "updatedAt": "2026-02-07T06:57:37.595Z"
+      "updatedAt": "2026-02-07T10:08:14.737Z"
     },
     "scripts/repo-metadata/package.json": {
       "type": "file",

@@ -7,14 +7,23 @@
  *
  * 传输方式: stdio（VS Code Copilot 标准集成）
  */
-import { execSync } from 'node:child_process';
-import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
+import {
+  buildTree,
+  depthOf,
+  getTrackedPaths,
+  globToRegex,
+  loadMetadata,
+  renderTree,
+  saveMetadata,
+  shouldIgnore,
+  updateStructureMd,
+} from './lib/shared.mjs';
 
 /* ------------------------------------------------------------------ */
 /*  路径常量                                                           */
@@ -24,162 +33,6 @@ const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(scriptDir, '../../');
 const metadataPath = path.join(repoRoot, 'docs', 'architecture', 'repo-metadata.json');
 const structureMdPath = path.join(repoRoot, 'docs', 'architecture', 'repository-structure.md');
-
-const MARKER_START = '<!-- REPO-TREE-START -->';
-const MARKER_END = '<!-- REPO-TREE-END -->';
-
-/* ------------------------------------------------------------------ */
-/*  元数据 JSON 读写                                                    */
-/* ------------------------------------------------------------------ */
-
-async function loadMetadata() {
-  try {
-    const content = await fs.readFile(metadataPath, 'utf8');
-    return JSON.parse(content);
-  } catch {
-    return {
-      version: 1,
-      config: {
-        scanIgnore: ['docs/dev_logs/**', 'docs/knowledge/_archive/**'],
-        generateMdDepth: 2,
-      },
-      updatedAt: new Date().toISOString(),
-      nodes: {},
-    };
-  }
-}
-
-async function saveMetadata(metadata) {
-  metadata.updatedAt = new Date().toISOString();
-  const sorted = Object.keys(metadata.nodes).sort();
-  const orderedNodes = {};
-  for (const key of sorted) {
-    orderedNodes[key] = metadata.nodes[key];
-  }
-  metadata.nodes = orderedNodes;
-  await fs.mkdir(path.dirname(metadataPath), { recursive: true });
-  await fs.writeFile(metadataPath, `${JSON.stringify(metadata, null, 2)}\n`, 'utf8');
-}
-
-/* ------------------------------------------------------------------ */
-/*  Scan 核心逻辑                                                      */
-/* ------------------------------------------------------------------ */
-
-function globToRegex(pattern) {
-  const re = pattern
-    .replace(/[.+^${}()|[\]\\]/g, '\\$&')
-    .replace(/\*\*/g, '{{GLOBSTAR}}')
-    .replace(/\*/g, '[^/]*')
-    .replace(/\?/g, '[^/]')
-    .replace(/\{\{GLOBSTAR\}\}/g, '.*');
-  return new RegExp(`^${re}$`);
-}
-
-function getTrackedPaths() {
-  const output = execSync('git ls-files', { cwd: repoRoot, encoding: 'utf8' });
-  const files = output.trim().split('\n').filter(Boolean);
-  const fileSet = new Set(files);
-  const dirSet = new Set();
-  for (const file of files) {
-    let dir = path.dirname(file);
-    while (dir !== '.') {
-      if (dirSet.has(dir)) break;
-      dirSet.add(dir);
-      dir = path.dirname(dir);
-    }
-  }
-  return { fileSet, dirSet };
-}
-
-function shouldIgnore(p, matchers) {
-  return matchers.some((re) => re.test(p));
-}
-
-function depthOf(p) {
-  return p.split('/').length;
-}
-
-/* ------------------------------------------------------------------ */
-/*  Tree / MD 生成逻辑                                                  */
-/* ------------------------------------------------------------------ */
-
-function buildTree(nodes) {
-  const root = { name: 'AIJourney', children: new Map(), meta: null };
-  for (const [nodePath, meta] of Object.entries(nodes)) {
-    const parts = nodePath.split('/');
-    let current = root;
-    for (const part of parts) {
-      if (!current.children.has(part)) {
-        current.children.set(part, { name: part, children: new Map(), meta: null });
-      }
-      current = current.children.get(part);
-    }
-    current.meta = meta;
-  }
-  return root;
-}
-
-function renderTree(root, maxDepth) {
-  const lines = [`${root.name}/`];
-  function renderChildren(node, prefix, currentDepth) {
-    if (currentDepth >= maxDepth) return;
-    const entries = [...node.children.entries()].sort(([aName, aNode], [bName, bNode]) => {
-      const aIsDir = aNode.meta?.type === 'directory' || aNode.children.size > 0;
-      const bIsDir = bNode.meta?.type === 'directory' || bNode.children.size > 0;
-      if (aIsDir !== bIsDir) return aIsDir ? -1 : 1;
-      return aName.localeCompare(bName);
-    });
-    entries.forEach(([name, child], index) => {
-      const isLast = index === entries.length - 1;
-      const connector = isLast ? '└── ' : '├── ';
-      const isDir = child.meta?.type === 'directory' || child.children.size > 0;
-      const displayName = isDir ? `${name}/` : name;
-      const desc = child.meta?.description || '';
-      const nameWidth = prefix.length + connector.length + displayName.length;
-      const PAD_TO = 45;
-      const padding = desc ? ' '.repeat(Math.max(1, PAD_TO - nameWidth)) : '';
-      const comment = desc ? `${padding}# ${desc}` : '';
-      lines.push(`${prefix}${connector}${displayName}${comment}`);
-      if (isDir && currentDepth + 1 < maxDepth) {
-        const childPrefix = prefix + (isLast ? '    ' : '│   ');
-        renderChildren(child, childPrefix, currentDepth + 1);
-      }
-    });
-  }
-  renderChildren(root, '', 0);
-  return lines.join('\n');
-}
-
-async function updateStructureMd(treeContent) {
-  let md;
-  try {
-    md = await fs.readFile(structureMdPath, 'utf8');
-  } catch {
-    md = `# AI Journey - 仓库架构文档\n\n## 目录结构\n\n${MARKER_START}\n\`\`\`\n\`\`\`\n${MARKER_END}\n`;
-  }
-  const startIdx = md.indexOf(MARKER_START);
-  const endIdx = md.indexOf(MARKER_END);
-  const treeBlock = `${MARKER_START}\n\`\`\`\n${treeContent}\n\`\`\`\n${MARKER_END}`;
-  if (startIdx !== -1 && endIdx !== -1) {
-    md = md.slice(0, startIdx) + treeBlock + md.slice(endIdx + MARKER_END.length);
-  } else {
-    const sectionMatch = md.match(/## 目录结构\s*\n/);
-    if (sectionMatch) {
-      const sectionStart = sectionMatch.index + sectionMatch[0].length;
-      const codeBlockMatch = md.slice(sectionStart).match(/```[\s\S]*?```/);
-      if (codeBlockMatch) {
-        const blockStart = sectionStart + codeBlockMatch.index;
-        const blockEnd = blockStart + codeBlockMatch[0].length;
-        md = md.slice(0, blockStart) + treeBlock + md.slice(blockEnd);
-      } else {
-        md = md.slice(0, sectionStart) + '\n' + treeBlock + '\n' + md.slice(sectionStart);
-      }
-    } else {
-      md += `\n## 目录结构\n\n${treeBlock}\n`;
-    }
-  }
-  await fs.writeFile(structureMdPath, md, 'utf8');
-}
 
 /* ------------------------------------------------------------------ */
 /*  PG 同步辅助（动态 import pg，仅在需要时）                          */
@@ -215,8 +68,8 @@ server.tool(
     maxDepth: z.number().optional().describe('最大扫描深度（默认: 无限制）'),
   },
   async ({ update, maxDepth }) => {
-    const { fileSet, dirSet } = getTrackedPaths();
-    const metadata = await loadMetadata();
+    const { fileSet, dirSet } = getTrackedPaths(repoRoot);
+    const metadata = await loadMetadata(metadataPath);
     const ignoreMatchers = (metadata.config?.scanIgnore ?? []).map(globToRegex);
 
     const diskPaths = new Map();
@@ -263,7 +116,7 @@ server.tool(
       for (const p of removed) {
         delete metadata.nodes[p];
       }
-      await saveMetadata(metadata);
+      await saveMetadata(metadataPath, metadata);
     }
 
     const lines = [];
@@ -302,7 +155,7 @@ server.tool(
     path: z.string().describe('相对路径，如 "web/src/components"'),
   },
   async ({ path: nodePath }) => {
-    const metadata = await loadMetadata();
+    const metadata = await loadMetadata(metadataPath);
     const node = metadata.nodes[nodePath];
     if (!node) {
       return { content: [{ type: 'text', text: `❌ 路径不存在: ${nodePath}` }] };
@@ -326,7 +179,7 @@ server.tool(
     type: z.enum(['file', 'directory']).optional().describe('类型'),
   },
   async ({ path: nodePath, description, detail, tags, type }) => {
-    const metadata = await loadMetadata();
+    const metadata = await loadMetadata(metadataPath);
     const now = new Date().toISOString();
     const existing = metadata.nodes[nodePath] ?? {
       type: type ?? 'directory',
@@ -345,7 +198,7 @@ server.tool(
     existing.updatedAt = now;
 
     metadata.nodes[nodePath] = existing;
-    await saveMetadata(metadata);
+    await saveMetadata(metadataPath, metadata);
 
     return { content: [{ type: 'text', text: `✅ 已更新: ${nodePath}` }] };
   },
@@ -369,7 +222,7 @@ server.tool(
       .describe('要更新的条目数组'),
   },
   async ({ items }) => {
-    const metadata = await loadMetadata();
+    const metadata = await loadMetadata(metadataPath);
     const now = new Date().toISOString();
     let updated = 0;
     let skipped = 0;
@@ -389,7 +242,7 @@ server.tool(
       updated++;
     }
 
-    await saveMetadata(metadata);
+    await saveMetadata(metadataPath, metadata);
     return {
       content: [{ type: 'text', text: `✅ 批量更新完成: ${updated}/${items.length} 条 (跳过 ${skipped})` }],
     };
@@ -408,7 +261,7 @@ server.tool(
     undescribedOnly: z.boolean().optional().default(false).describe('只显示未描述的条目'),
   },
   async ({ type, tag, maxDepth, undescribedOnly }) => {
-    const metadata = await loadMetadata();
+    const metadata = await loadMetadata(metadataPath);
     const entries = Object.entries(metadata.nodes)
       .filter(([p, node]) => {
         if (maxDepth && depthOf(p) > maxDepth) return false;
@@ -443,7 +296,7 @@ server.tool(
     path: z.string().describe('要删除的相对路径'),
   },
   async ({ path: nodePath }) => {
-    const metadata = await loadMetadata();
+    const metadata = await loadMetadata(metadataPath);
     if (!metadata.nodes[nodePath]) {
       return { content: [{ type: 'text', text: `❌ 路径不存在: ${nodePath}` }] };
     }
@@ -458,7 +311,7 @@ server.tool(
       }
     }
 
-    await saveMetadata(metadata);
+    await saveMetadata(metadataPath, metadata);
     return {
       content: [
         { type: 'text', text: `✅ 已删除: ${nodePath}${cascaded > 0 ? ` (+ ${cascaded} 个子路径)` : ''}` },
@@ -476,7 +329,7 @@ server.tool(
     depth: z.number().optional().describe('目录树展开深度（默认: config.generateMdDepth 或 2）'),
   },
   async ({ depth }) => {
-    const metadata = await loadMetadata();
+    const metadata = await loadMetadata(metadataPath);
     const treeDepth = depth ?? metadata.config?.generateMdDepth ?? 2;
 
     if (Object.keys(metadata.nodes).length === 0) {
@@ -485,7 +338,7 @@ server.tool(
 
     const tree = buildTree(metadata.nodes);
     const treeContent = renderTree(tree, treeDepth);
-    await updateStructureMd(treeContent);
+    await updateStructureMd(structureMdPath, treeContent);
 
     const nodeCount = Object.keys(metadata.nodes).length;
     return {
@@ -509,7 +362,7 @@ server.tool(
 
     try {
       if (direction === 'json-to-pg') {
-        const metadata = await loadMetadata();
+        const metadata = await loadMetadata(metadataPath);
         const entries = Object.entries(metadata.nodes);
 
         if (entries.length === 0) {
@@ -571,7 +424,7 @@ server.tool(
           return { content: [{ type: 'text', text: 'ℹ PG 表为空。' }] };
         }
 
-        const metadata = await loadMetadata();
+        const metadata = await loadMetadata(metadataPath);
         const nodes = {};
         for (const row of result.rows) {
           nodes[row.path] = {
@@ -585,7 +438,7 @@ server.tool(
         }
 
         metadata.nodes = nodes;
-        await saveMetadata(metadata);
+        await saveMetadata(metadataPath, metadata);
 
         return {
           content: [{ type: 'text', text: `✅ PG → JSON 同步完成: ${result.rows.length} 条记录` }],

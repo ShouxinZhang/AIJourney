@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Client } from 'pg';
+import { parseFlags, safeResolveDocPath } from './_shared.mjs';
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(scriptDir, '../../../../');
@@ -11,38 +12,6 @@ const databaseUrl = process.env.DATABASE_URL;
 if (!databaseUrl) {
   console.error('❌ 缺少 DATABASE_URL，无法执行文档 CRUD。');
   process.exit(1);
-}
-
-function parseFlags(args) {
-  const flags = {};
-  for (let i = 0; i < args.length; i += 1) {
-    const token = args[i];
-    if (!token.startsWith('--')) {
-      continue;
-    }
-
-    const key = token.slice(2);
-    const next = args[i + 1];
-    if (!next || next.startsWith('--')) {
-      flags[key] = 'true';
-      continue;
-    }
-
-    flags[key] = next;
-    i += 1;
-  }
-  return flags;
-}
-
-function safeResolveDocPath(relativePath) {
-  const normalized = relativePath.replace(/\\/g, '/');
-  const absolute = path.resolve(docsRoot, normalized);
-  const docsRootWithSep = `${docsRoot}${path.sep}`;
-
-  if (!absolute.startsWith(docsRootWithSep)) {
-    throw new Error(`非法 doc_path（越界）: ${relativePath}`);
-  }
-  return absolute;
 }
 
 function templateMarkdown(title) {
@@ -82,7 +51,7 @@ async function createDoc(client, flags) {
   }
 
   const node = await getNode(client, nodeId);
-  const absolutePath = safeResolveDocPath(node.doc_path);
+  const absolutePath = safeResolveDocPath(docsRoot, node.doc_path);
 
   let exists = false;
   try {
@@ -109,7 +78,7 @@ async function deleteDoc(client, flags) {
   }
 
   const node = await getNode(client, nodeId);
-  const absolutePath = safeResolveDocPath(node.doc_path);
+  const absolutePath = safeResolveDocPath(docsRoot, node.doc_path);
 
   try {
     await fs.access(absolutePath);

@@ -1,6 +1,6 @@
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { HIDDEN_HANDLE_STYLE, NODE_HEIGHT } from '../constants';
-import { getFruitIcon } from '../model/graph-layout';
+import { getFruitIcon } from './fruit-icon';
 
 export function KnowledgeFlowNode({ id, data }: NodeProps) {
   const nodeData = data as Record<string, unknown>;

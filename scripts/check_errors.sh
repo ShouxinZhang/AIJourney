@@ -29,6 +29,10 @@ BOLD='\033[1m'
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 WEB_DIR="$PROJECT_ROOT/web"
+ROOT_NODE_MODULES="$PROJECT_ROOT/node_modules"
+ROOT_LOCK="$PROJECT_ROOT/package-lock.json"
+ROOT_PACKAGE_JSON="$PROJECT_ROOT/package.json"
+WEB_LOCK="$WEB_DIR/package-lock.json"
 
 # ── 结果计数器 ──
 TOTAL_ERRORS=0
@@ -36,6 +40,10 @@ PASS_COUNT=0
 FAIL_COUNT=0
 SKIP_COUNT=0
 RESULTS=()
+
+is_workspace_mode() {
+  [ -f "$ROOT_PACKAGE_JSON" ] && grep -q '"workspaces"' "$ROOT_PACKAGE_JSON"
+}
 
 # ── 工具函数 ──
 print_header() {
@@ -82,11 +90,30 @@ check_dependencies() {
   print_step "$STEP" "检查依赖是否安装"
   STEP=$((STEP + 1))
 
-  if [ ! -d "$WEB_DIR/node_modules" ] || [ ! -f "$WEB_DIR/package-lock.json" ]; then
+  if is_workspace_mode; then
+    if [ ! -d "$ROOT_NODE_MODULES" ] || [ ! -f "$ROOT_LOCK" ]; then
+      echo -e "  ${YELLOW}⚠ 检测到 workspace，正在根目录统一安装依赖...${NC}"
+      local output
+      local install_exit=0
+      if [ -f "$ROOT_LOCK" ]; then
+        output=$(cd "$PROJECT_ROOT" && npm ci 2>&1) || install_exit=$?
+      else
+        output=$(cd "$PROJECT_ROOT" && npm install 2>&1) || install_exit=$?
+      fi
+      if [ "$install_exit" -ne 0 ] || [ ! -d "$ROOT_NODE_MODULES" ]; then
+        record_result "依赖安装（workspace）" 1 "$output"
+        return 1
+      fi
+    fi
+    record_result "依赖检查（workspace）" 0 ""
+    return 0
+  fi
+
+  if [ ! -d "$WEB_DIR/node_modules" ] || [ ! -f "$WEB_LOCK" ]; then
     echo -e "  ${YELLOW}⚠ 依赖未安装或缺少 lock 文件，正在安装...${NC}"
     local output
     local install_exit=0
-    if [ -f "$WEB_DIR/package-lock.json" ]; then
+    if [ -f "$WEB_LOCK" ]; then
       output=$(cd "$WEB_DIR" && npm ci 2>&1) || install_exit=$?
     else
       output=$(cd "$WEB_DIR" && npm install 2>&1) || install_exit=$?
@@ -105,7 +132,11 @@ check_typescript() {
 
   local output
   local exit_code=0
-  output=$(cd "$WEB_DIR" && npx tsc --noEmit 2>&1) || exit_code=$?
+  if is_workspace_mode; then
+    output=$(cd "$PROJECT_ROOT" && npm exec --workspace web -- tsc --noEmit 2>&1) || exit_code=$?
+  else
+    output=$(cd "$WEB_DIR" && npx tsc --noEmit 2>&1) || exit_code=$?
+  fi
   record_result "TypeScript 类型检查" "$exit_code" "$output"
 }
 
@@ -115,7 +146,11 @@ check_eslint() {
 
   local output
   local exit_code=0
-  output=$(cd "$WEB_DIR" && npx eslint . --max-warnings 0 2>&1) || exit_code=$?
+  if is_workspace_mode; then
+    output=$(cd "$PROJECT_ROOT" && npm run --workspace web lint 2>&1) || exit_code=$?
+  else
+    output=$(cd "$WEB_DIR" && npx eslint . --max-warnings 0 2>&1) || exit_code=$?
+  fi
   record_result "ESLint 代码规范" "$exit_code" "$output"
 }
 
@@ -125,7 +160,11 @@ check_build() {
 
   local output
   local exit_code=0
-  output=$(cd "$WEB_DIR" && npx vite build 2>&1) || exit_code=$?
+  if is_workspace_mode; then
+    output=$(cd "$PROJECT_ROOT" && npm run --workspace web build 2>&1) || exit_code=$?
+  else
+    output=$(cd "$WEB_DIR" && npx vite build 2>&1) || exit_code=$?
+  fi
   record_result "Vite 生产构建" "$exit_code" "$output"
 }
 

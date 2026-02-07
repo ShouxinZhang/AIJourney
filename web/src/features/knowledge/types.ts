@@ -1,6 +1,7 @@
-import type { KnowledgeNode } from '../../data/knowledge-tree';
+import type { KnowledgeNode } from '../../data/knowledge-node';
 
 export type { KnowledgeNode };
+export type NodeKind = 'folder' | 'node';
 
 export type ViewMode = 'folder' | 'graph';
 
@@ -9,6 +10,7 @@ export interface FolderRow {
   label: string;
   depth: number;
   hasChildren: boolean;
+  isFolder: boolean;
   color: string;
 }
 

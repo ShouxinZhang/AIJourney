@@ -6,27 +6,10 @@
  */
 
 import readModel from './read-model.json';
-
-export interface KnowledgeNode {
-  id: string;
-  label: string;
-  description?: string;
-  content?: string;
-  children?: KnowledgeNode[];
-  color?: string;
-  docPath?: string;
-  dependencies?: string[];
-}
-
-interface KnowledgeReadModel {
-  meta: {
-    generatedAt: string;
-    source: string;
-  };
-  tree: KnowledgeNode[];
-}
+import type { KnowledgeNode, KnowledgeReadModel } from './knowledge-node';
 
 const model = readModel as KnowledgeReadModel;
 
 export const knowledgeReadModelMeta = model.meta;
 export const knowledgeTree: KnowledgeNode[] = model.tree;
+export type { KnowledgeNode };

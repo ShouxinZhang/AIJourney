@@ -12,9 +12,3 @@ export const HIDDEN_HANDLE_STYLE = {
   opacity: 0,
   pointerEvents: 'none' as const,
 };
-
-export const FRUIT_ICONS: Record<string, string> = {
-  'vibe-coding': '🍊',
-  'agent-dev': '🥝',
-  'llm-fundamental': '🫐',
-};

@@ -63,11 +63,11 @@ AIJourney/
 git clone https://github.com/ShouxinZhang/AIJourney.git
 cd AIJourney
 
-# 安装依赖
-cd web && npm install
+# 安装依赖（workspace，仅需一次）
+npm install
 
 # 启动开发服务器
-npm run dev
+npm run -w web dev
 ```
 
 ## 使用方式

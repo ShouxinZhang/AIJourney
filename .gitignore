@@ -2,8 +2,14 @@
 .vscode/database-client-config.json
 .vscode/mcp.json
 
+# Workspace root dependencies
+/node_modules/
+
 # Generated local trash files from knowledge CRUD
 /docs/knowledge/_trash/
 
 # Local dependencies for repo metadata tooling
 /scripts/repo-metadata/node_modules/
+
+# Review pipeline artifacts
+/scripts/review/artifacts/

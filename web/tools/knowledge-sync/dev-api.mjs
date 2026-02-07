@@ -121,15 +121,21 @@ export function knowledgeDevApiPlugin() {
             const body = await readJsonBody(req);
             const label = String(body?.label ?? '').trim();
             const parentId = body?.parentId ? String(body.parentId).trim() : null;
+            const rawKind = String(body?.kind ?? 'node').trim().toLowerCase();
+            const kind = rawKind === 'folder' ? 'folder' : rawKind === 'node' ? 'node' : null;
 
             if (!label) {
               sendJson(res, 400, { ok: false, message: 'label 不能为空' });
               return;
             }
+            if (!kind) {
+              sendJson(res, 400, { ok: false, message: 'kind 必须是 folder 或 node' });
+              return;
+            }
 
             const base = slugify(label);
             const id = `${base}-${Date.now().toString(36).slice(-6)}`;
-            const args = ['create', '--id', id, '--label', label];
+            const args = ['create', '--id', id, '--label', label, '--kind', kind];
             if (parentId) {
               args.push('--parent-id', parentId);
             }
@@ -137,7 +143,7 @@ export function knowledgeDevApiPlugin() {
             await runKnowledgeScript({ scriptName: 'crud-node.mjs', args, databaseUrl });
             await runKnowledgeScript({ scriptName: 'sync-read-model.mjs', args: [], databaseUrl });
 
-            sendJson(res, 200, { ok: true, id, label, parentId });
+            sendJson(res, 200, { ok: true, id, label, parentId, kind });
             return;
           }
 
