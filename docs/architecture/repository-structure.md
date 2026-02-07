@@ -5,73 +5,34 @@ AI 学习之旅知识图谱网站，以“文件夹视图 + 依赖图视图 + �
 
 ## 目录结构
 
+<!-- REPO-TREE-START -->
 ```
 AIJourney/
-├── AGENTS.md                          # AI Agent 行为规范（全局自定义指令）
-├── LICENSE                            # 许可证
-├── .agents/skills/                    # Agent Skills（任务型专项技能）
-│   ├── local-dev-workflow/SKILL.md   # 本地开发全链路 SOP（总调度）
-│   ├── dev-logs/SKILL.md             # 开发日志记录规范（含用户 prompt 记录）
-│   ├── build-check/SKILL.md          # 代码构建全链路质量门禁
-│   ├── knowledge-tree-update/SKILL.md # 知识图谱数据维护规范
-│   └── repo-structure-sync/SKILL.md  # 仓库架构文档同步规范
-├── scripts/                           # 构建与运维脚本
-│   ├── check_errors.sh               # 全链路构建检查 (TSC + ESLint + Vite Build)
-│   └── restart.sh                    # 一键启动/重启开发服务器
-├── web/                               # 知识图谱前端网站 (Vite + React + TS)
-│   ├── index.html                     # HTML 入口
-│   ├── package.json                   # 依赖管理
-│   ├── vite.config.ts                 # Vite 构建配置
-│   ├── tsconfig.json                  # TypeScript 配置
-│   ├── eslint.config.js               # ESLint 配置
-│   ├── public/                        # 静态资源
-│   ├── tools/
-│   │   └── knowledge-sync/            # 本地知识同步模块（PG+MD -> read-model）
-│   │       ├── README.md              # 同步模块使用说明
-│   │       ├── sql/
-│   │       │   └── 001_init.sql       # PostgreSQL 知识库初始化脚本
-│   │       └── scripts/
-│   │           ├── bootstrap-read-model-from-legacy-tree.mjs # 从旧树数据生成初始 read-model
-│   │           ├── crud-doc.mjs      # 文档 CRUD（create/delete/path）
-│   │           ├── crud-node.mjs     # 节点 CRUD（create/update/delete/list）
-│   │           ├── export-leaf-markdown.mjs # 生成叶子节点 Markdown 文档
-│   │           ├── import-read-model-to-postgres.mjs # 从 read-model 回填 PostgreSQL
-│   │           ├── sync-markdown-to-postgres.mjs # 将本地 Markdown 增量同步到 PostgreSQL
-│   │           └── sync-read-model.mjs # 从 PostgreSQL 与 Markdown 同步 read-model
-│   └── src/                           # 源代码
-│       ├── main.tsx                   # 应用入口
-│       ├── App.tsx                    # 根组件
-│       ├── index.css                  # 全局样式 (Tailwind + Google Fonts)
-│       ├── vite-env.d.ts              # Vite 类型声明
-│       ├── components/                # UI 组件
-│       │   └── KnowledgeGraph.tsx     # 知识中枢组件（文件夹/依赖图双视图，含详情联动）
-│       ├── data/                      # 数据层
-│       │   ├── knowledge-tree.ts      # 知识树读取层（读取 read-model）
-│       │   └── read-model.json        # 线上只读发布模型（同步产物）
-│       └── __tests__/                 # 自动化测试
-│           └── knowledge-tree.test.ts # 知识树数据完整性测试
-└── docs/                              # 文档
-    ├── architecture/
-    │   └── repository-structure.md    # 本文件 - 仓库架构说明
-    ├── knowledge/                     # 叶子节点 Markdown 知识库（本地编辑）
-    │   ├── _archive/                  # 节点删除后的文档归档目录（事务补偿）
-    │   ├── vibe-coding/               # Vibe Coding 叶子知识文档
-    │   ├── agent-dev/                 # Agent Dev 叶子知识文档
-    │   └── llm-fundamental/           # LLM Fundamental 叶子知识文档
-    └── dev_logs/                      # 开发日志（含用户 prompt 记录）
-        └── 2026-02-07/               # 按日期归档
-            ├── 01-init-knowledge-graph.md
-            ├── 02-bugfix-five-issues.md
-            ├── 03-create-agent-skills.md
-            ├── 04-folder-graph-dual-view.md
-            ├── 05-fix-graph-edge-rendering.md
-            ├── 06-local-dev-workflow-skill.md
-            ├── 07-postgres-markdown-read-model-sync.md
-            ├── 08-complete-postgres-sync-runtime.md
-            ├── 09-md-db-read-crud-upgrade.md
-            ├── 10-markdown-render-transaction-crud.md
-            └── image/                 # 日志配图素材目录
+├── .agents/                                 # Agent Skills 目录（任务型专项技能）
+│   └── skills/                              # 各 Skill 定义目录
+├── docs/                                    # 项目文档（架构、知识库、开发日志）
+│   ├── architecture/                        # 架构文档与仓库元数据
+│   ├── dev_logs/                            # 开发日志（按日期归档）
+│   └── knowledge/                           # 叶子节点 Markdown 知识库（本地编辑）
+├── scripts/                                 # 构建与运维脚本
+│   ├── repo-metadata/                       # 仓库元数据管理系统（扫描/CRUD/PG同步/生成架构文档）
+│   ├── check_errors.sh                      # 全链路构建检查 (TSC + ESLint + Vite Build)
+│   └── restart.sh                           # 一键启动/重启开发服务器
+├── web/                                     # 知识图谱前端网站 (Vite + React + TS)
+│   ├── src/                                 # 前端源代码
+│   ├── tools/                               # 本地开发工具集
+│   ├── .gitignore                           # Web 模块 Git 忽略规则
+│   ├── eslint.config.js                     # ESLint 配置
+│   ├── index.html                           # HTML 入口
+│   ├── package.json                         # 依赖管理与 npm 脚本
+│   ├── tsconfig.json                        # TypeScript 配置
+│   └── vite.config.ts                       # Vite 构建配置
+├── .gitignore                               # 仓库级 Git 忽略规则（本地配置/垃圾桶/依赖）
+├── .gitattributes                           # Git 属性配置
+├── AGENTS.md                                # AI Agent 行为规范（全局自定义指令）
+└── LICENSE                                  # 项目许可证
 ```
+<!-- REPO-TREE-END -->
 
 ## 技术栈
 
@@ -124,6 +85,14 @@ npm run knowledge:publish-read # 先同步 Markdown 到 DB，再生成 read-mode
 npm run knowledge:node -- <args> # 节点 CRUD 命令
 npm run knowledge:doc -- <args> # 文档 CRUD 命令
 
+# 仓库元数据管理
+npm run repo:scan           # 扫描目录结构并报告变化
+npm run repo:scan-update    # 扫描并自动更新 repo-metadata.json
+npm run repo:crud -- <args> # 元数据 CRUD 操作
+npm run repo:generate-md    # 从 JSON 生成 repository-structure.md 目录树
+npm run repo:sync-to-db     # JSON → PostgreSQL（需 DATABASE_URL）
+npm run repo:sync-from-db   # PostgreSQL → JSON（需 DATABASE_URL）
+
 # 或直接运行检查脚本
 bash scripts/restart.sh               # 一键启动开发服务器
 bash scripts/restart.sh --check       # 先检查再启动
@@ -140,5 +109,5 @@ bash scripts/check_errors.sh --build  # 仅构建
 当前采用“本地可编辑 + 线上只读”模式：
 
 1. 在 PostgreSQL 的 `knowledge_nodes` / `knowledge_dependencies` 维护结构与关系  
-2. 在 `docs/knowledge/` 维护叶子节点 Markdown 正文  
+2. 在 `docs/knowledge/` 维护叶子节点 Markdown 正文（删除进入 `docs/knowledge/_trash/`）  
 3. 执行 `cd web && npm run knowledge:publish-read` 完成 “MD -> DB -> read-model” 同步链路  

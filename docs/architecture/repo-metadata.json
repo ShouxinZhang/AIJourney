@@ -1,0 +1,604 @@
+{
+  "version": 1,
+  "config": {
+    "scanIgnore": [
+      "docs/dev_logs/**",
+      "docs/knowledge/_archive/**",
+      "docs/knowledge/**/*.md",
+      "docs/knowledge/**/image/**",
+      ".vite",
+      ".vite/**",
+      ".vscode",
+      ".vscode/**",
+      "web/package-lock.json"
+    ],
+    "generateMdDepth": 2
+  },
+  "updatedAt": "2026-02-07T06:27:03.224Z",
+  "nodes": {
+    ".agents": {
+      "type": "directory",
+      "description": "Agent Skills 目录（任务型专项技能）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    ".agents/skills": {
+      "type": "directory",
+      "description": "各 Skill 定义目录",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    ".agents/skills/build-check": {
+      "type": "directory",
+      "description": "代码构建全链路质量门禁",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    ".agents/skills/build-check/SKILL.md": {
+      "type": "file",
+      "description": "构建检查 Skill 定义文件",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    ".agents/skills/dev-logs": {
+      "type": "directory",
+      "description": "开发日志记录规范",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    ".agents/skills/dev-logs/SKILL.md": {
+      "type": "file",
+      "description": "开发日志 Skill 定义文件",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    ".agents/skills/knowledge-tree-update": {
+      "type": "directory",
+      "description": "知识图谱数据维护规范",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    ".agents/skills/knowledge-tree-update/SKILL.md": {
+      "type": "file",
+      "description": "知识图谱 Skill 定义文件",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    ".agents/skills/local-dev-workflow": {
+      "type": "directory",
+      "description": "本地开发全链路 SOP（总调度）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    ".agents/skills/local-dev-workflow/SKILL.md": {
+      "type": "file",
+      "description": "本地开发工作流 Skill 定义文件",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    ".agents/skills/repo-structure-sync": {
+      "type": "directory",
+      "description": "仓库架构文档同步规范（基于 repo-metadata）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    ".agents/skills/repo-structure-sync/SKILL.md": {
+      "type": "file",
+      "description": "架构同步 Skill 定义文件",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    ".gitattributes": {
+      "type": "file",
+      "description": "Git 属性配置",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "AGENTS.md": {
+      "type": "file",
+      "description": "AI Agent 行为规范（全局自定义指令）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "LICENSE": {
+      "type": "file",
+      "description": "项目许可证",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "docs": {
+      "type": "directory",
+      "description": "项目文档（架构、知识库、开发日志）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "docs/architecture": {
+      "type": "directory",
+      "description": "架构文档与仓库元数据",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "docs/architecture/repo-metadata.json": {
+      "type": "file",
+      "description": "仓库结构元数据（source of truth）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:10:14.079Z"
+    },
+    "docs/architecture/repository-structure.md": {
+      "type": "file",
+      "description": "仓库架构说明文档（自动生成目录树）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "docs/dev_logs": {
+      "type": "directory",
+      "description": "开发日志（按日期归档）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "docs/knowledge": {
+      "type": "directory",
+      "description": "叶子节点 Markdown 知识库（本地编辑）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "docs/knowledge/_archive": {
+      "type": "directory",
+      "description": "节点删除后的文档归档目录（事务补偿）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "docs/knowledge/agent-dev": {
+      "type": "directory",
+      "description": "Agent Dev 叶子知识文档",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "docs/knowledge/llm-fundamental": {
+      "type": "directory",
+      "description": "LLM Fundamental 叶子知识文档",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "docs/knowledge/vibe-coding": {
+      "type": "directory",
+      "description": "Vibe Coding 叶子知识文档",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "docs/knowledge/vibe-coding/image": {
+      "type": "directory",
+      "description": "Vibe Coding 文档配图",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "scripts": {
+      "type": "directory",
+      "description": "构建与运维脚本",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "scripts/check_errors.sh": {
+      "type": "file",
+      "description": "全链路构建检查 (TSC + ESLint + Vite Build)",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "scripts/repo-metadata": {
+      "type": "directory",
+      "description": "仓库元数据管理系统（扫描/CRUD/PG同步/生成架构文档）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:10:14.079Z"
+    },
+    "scripts/repo-metadata/README.md": {
+      "type": "file",
+      "description": "repo-metadata 使用说明",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:10:14.079Z"
+    },
+    "scripts/repo-metadata/mcp-server.mjs": {
+      "type": "file",
+      "description": "MCP Server（8 个 Tools，stdio 传输）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "human",
+      "updatedAt": "2026-02-07T06:27:03.223Z"
+    },
+    "scripts/repo-metadata/package.json": {
+      "type": "file",
+      "description": "repo-metadata 依赖管理（pg）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:10:14.079Z"
+    },
+    "scripts/repo-metadata/scripts": {
+      "type": "directory",
+      "description": "元数据管理脚本",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:10:14.079Z"
+    },
+    "scripts/repo-metadata/scripts/crud.mjs": {
+      "type": "file",
+      "description": "元数据 CRUD（JSON 直接操作）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:10:14.079Z"
+    },
+    "scripts/repo-metadata/scripts/generate-structure-md.mjs": {
+      "type": "file",
+      "description": "JSON → repository-structure.md 自动生成",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:10:14.079Z"
+    },
+    "scripts/repo-metadata/scripts/scan.mjs": {
+      "type": "file",
+      "description": "目录结构扫描器（对比 JSON 发现变化）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:10:14.079Z"
+    },
+    "scripts/repo-metadata/scripts/sync-json-to-postgres.mjs": {
+      "type": "file",
+      "description": "JSON → PG 同步",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:10:14.079Z"
+    },
+    "scripts/repo-metadata/scripts/sync-to-json.mjs": {
+      "type": "file",
+      "description": "PG → JSON 同步",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:10:14.079Z"
+    },
+    "scripts/repo-metadata/sql": {
+      "type": "directory",
+      "description": "PG 表定义目录",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:10:14.079Z"
+    },
+    "scripts/repo-metadata/sql/001_init.sql": {
+      "type": "file",
+      "description": "repo_metadata_nodes 表初始化脚本",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:10:14.079Z"
+    },
+    "scripts/restart.sh": {
+      "type": "file",
+      "description": "一键启动/重启开发服务器",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web": {
+      "type": "directory",
+      "description": "知识图谱前端网站 (Vite + React + TS)",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/.gitignore": {
+      "type": "file",
+      "description": "Web 模块 Git 忽略规则",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/eslint.config.js": {
+      "type": "file",
+      "description": "ESLint 配置",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/index.html": {
+      "type": "file",
+      "description": "HTML 入口",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/package.json": {
+      "type": "file",
+      "description": "依赖管理与 npm 脚本",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/src": {
+      "type": "directory",
+      "description": "前端源代码",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/src/App.tsx": {
+      "type": "file",
+      "description": "React 根组件",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/src/__tests__": {
+      "type": "directory",
+      "description": "自动化测试",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/src/__tests__/knowledge-tree.test.ts": {
+      "type": "file",
+      "description": "知识树数据完整性测试",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/src/components": {
+      "type": "directory",
+      "description": "UI 组件",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/src/components/KnowledgeGraph.tsx": {
+      "type": "file",
+      "description": "知识图谱核心组件（文件夹/依赖图双视图 + 详情面板）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/src/data": {
+      "type": "directory",
+      "description": "数据层",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/src/data/knowledge-tree.ts": {
+      "type": "file",
+      "description": "知识树读取层（读取 read-model）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/src/data/read-model.json": {
+      "type": "file",
+      "description": "线上只读发布模型（同步产物）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/src/index.css": {
+      "type": "file",
+      "description": "全局样式 (Tailwind + Google Fonts)",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/src/main.tsx": {
+      "type": "file",
+      "description": "应用入口",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/src/vite-env.d.ts": {
+      "type": "file",
+      "description": "Vite 类型声明",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/tools": {
+      "type": "directory",
+      "description": "本地开发工具集",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/tools/knowledge-sync": {
+      "type": "directory",
+      "description": "知识同步模块（PG + MD → read-model）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/tools/knowledge-sync/README.md": {
+      "type": "file",
+      "description": "知识同步模块使用说明",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/tools/knowledge-sync/scripts": {
+      "type": "directory",
+      "description": "知识同步脚本",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/tools/knowledge-sync/scripts/bootstrap-read-model-from-legacy-tree.mjs": {
+      "type": "file",
+      "description": "从旧树数据生成初始 read-model",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/tools/knowledge-sync/scripts/crud-doc.mjs": {
+      "type": "file",
+      "description": "文档 CRUD（create/delete/path）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/tools/knowledge-sync/scripts/crud-node.mjs": {
+      "type": "file",
+      "description": "节点 CRUD（create/update/delete/list）",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/tools/knowledge-sync/scripts/export-leaf-markdown.mjs": {
+      "type": "file",
+      "description": "生成叶子节点 Markdown 文档",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/tools/knowledge-sync/scripts/import-read-model-to-postgres.mjs": {
+      "type": "file",
+      "description": "从 read-model 回填 PostgreSQL",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/tools/knowledge-sync/scripts/sync-markdown-to-postgres.mjs": {
+      "type": "file",
+      "description": "本地 Markdown 增量同步到 PostgreSQL",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/tools/knowledge-sync/scripts/sync-read-model.mjs": {
+      "type": "file",
+      "description": "从 PG + Markdown 同步 read-model",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/tools/knowledge-sync/sql": {
+      "type": "directory",
+      "description": "知识库 SQL 脚本",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/tools/knowledge-sync/sql/001_init.sql": {
+      "type": "file",
+      "description": "PostgreSQL 知识库初始化脚本",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/tsconfig.json": {
+      "type": "file",
+      "description": "TypeScript 配置",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    },
+    "web/vite.config.ts": {
+      "type": "file",
+      "description": "Vite 构建配置",
+      "detail": "",
+      "tags": [],
+      "updatedBy": "llm",
+      "updatedAt": "2026-02-07T06:09:36.647Z"
+    }
+  }
+}

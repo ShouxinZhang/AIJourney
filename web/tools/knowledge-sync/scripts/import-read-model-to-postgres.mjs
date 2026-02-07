@@ -70,7 +70,11 @@ async function main() {
       alter table knowledge_nodes
         add column if not exists doc_markdown text,
         add column if not exists doc_hash text,
-        add column if not exists doc_synced_at timestamptz
+        add column if not exists doc_synced_at timestamptz,
+        add column if not exists is_trashed boolean not null default false,
+        add column if not exists trashed_at timestamptz,
+        add column if not exists trashed_parent_id text,
+        add column if not exists trash_tx_id text
     `);
 
     await client.query('begin');
@@ -81,8 +85,8 @@ async function main() {
     for (const row of rows) {
       await client.query(
         `insert into knowledge_nodes (
-          id, label, summary, color, parent_id, doc_path, doc_markdown, doc_hash, doc_synced_at, sort_order
-        ) values ($1, $2, $3, $4, $5, $6, $7, $8, case when $7 is null then null else now() end, $9)`,
+          id, label, summary, color, parent_id, doc_path, doc_markdown, doc_hash, doc_synced_at, is_trashed, trashed_at, trashed_parent_id, trash_tx_id, sort_order
+        ) values ($1, $2, $3, $4, $5, $6, $7, $8, case when $7 is null then null else now() end, false, null, null, null, $9)`,
         [
           row.id,
           row.label,

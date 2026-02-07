@@ -14,8 +14,9 @@
 - `scripts/sync-markdown-to-postgres.mjs`：把本地 Markdown 增量同步到 PostgreSQL
 - `scripts/import-read-model-to-postgres.mjs`：把 `read-model.json` 导入 PostgreSQL（初始化/回填）
 - `scripts/sync-read-model.mjs`：从 `PostgreSQL + Markdown` 生成最新 `read-model.json`
-- `scripts/crud-node.mjs`：节点元数据 CRUD（create / update / delete / list）
+- `scripts/crud-node.mjs`：节点元数据 CRUD（create / update / delete->trash / restore / list）
 - `scripts/crud-doc.mjs`：文档 CRUD（create / delete / path）
+- `dev-api.mjs`：Vite 本地开发 API（右键新增/删除时调用）
 
 ## 表结构（简版）
 
@@ -26,6 +27,9 @@
   - `parent_id`：父节点
   - `color`：节点色
   - `doc_path`：叶子文档路径（相对 `docs/knowledge/`）
+  - `is_trashed`：是否在垃圾桶
+  - `trashed_at`：删除到垃圾桶时间
+  - `trash_tx_id`：垃圾桶批次号（用于恢复）
   - `sort_order`：同层排序
 - `knowledge_dependencies`
   - `source_id -> target_id`：依赖关系（可选，支持未来增强）
@@ -88,7 +92,8 @@ DATABASE_URL='postgres://<user>:<pass>@<host>:<port>/<db>' npm run knowledge:doc
 ## 一致性策略
 
 - 节点创建：`knowledge:node create` 默认自动生成文档（同事务链路，失败会回滚并清理文件）
-- 节点删除：`knowledge:node delete` 自动归档子树文档到 `docs/knowledge/_archive/<txid>/`（数据库失败会恢复文档）
+- 节点删除：`knowledge:node delete` 自动移动子树文档到 `docs/knowledge/_trash/<txid>/`，并把节点标记为垃圾桶状态（数据库失败会恢复文档）
+- 节点恢复：`knowledge:node restore` 按批次把文档从 `_trash` 迁回原路径，并恢复节点可见状态
 - 文档删除：`knowledge:doc delete` 会先创建 `.bak-时间戳` 备份再删除
 
 ## 约束说明

@@ -83,7 +83,11 @@ async function ensureColumns(client) {
     alter table knowledge_nodes
       add column if not exists doc_markdown text,
       add column if not exists doc_hash text,
-      add column if not exists doc_synced_at timestamptz
+      add column if not exists doc_synced_at timestamptz,
+      add column if not exists is_trashed boolean not null default false,
+      add column if not exists trashed_at timestamptz,
+      add column if not exists trashed_parent_id text,
+      add column if not exists trash_tx_id text
   `);
 }
 
@@ -99,6 +103,7 @@ async function loadNodeRows(client) {
       doc_markdown,
       sort_order
     from knowledge_nodes
+    where coalesce(is_trashed, false) = false
     order by
       case when parent_id is null then 0 else 1 end,
       parent_id,

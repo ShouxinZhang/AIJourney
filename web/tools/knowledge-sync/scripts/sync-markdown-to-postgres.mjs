@@ -43,7 +43,11 @@ async function ensureColumns(client) {
     alter table knowledge_nodes
       add column if not exists doc_markdown text,
       add column if not exists doc_hash text,
-      add column if not exists doc_synced_at timestamptz
+      add column if not exists doc_synced_at timestamptz,
+      add column if not exists is_trashed boolean not null default false,
+      add column if not exists trashed_at timestamptz,
+      add column if not exists trashed_parent_id text,
+      add column if not exists trash_tx_id text
   `);
 }
 
@@ -61,7 +65,7 @@ async function main() {
     const result = await client.query(`
       select id, doc_path, doc_hash
       from knowledge_nodes
-      where doc_path is not null
+      where doc_path is not null and coalesce(is_trashed, false) = false
       order by id
     `);
 

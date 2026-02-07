@@ -50,8 +50,9 @@ function printUsage() {
 用法:
   node crud-node.mjs create --id <id> --label <label> [--parent-id <id>] [--summary <text>] [--color <hex>] [--doc-path <path>] [--sort-order <n>] [--skip-doc true]
   node crud-node.mjs update --id <id> [--label <label>] [--summary <text>] [--color <hex>] [--parent-id <id>] [--doc-path <path>] [--sort-order <n>]
-  node crud-node.mjs delete --id <id>
-  node crud-node.mjs list
+  node crud-node.mjs delete --id <id>           # 删除到垃圾桶（软删除）
+  node crud-node.mjs restore --id <id>          # 从垃圾桶恢复子树
+  node crud-node.mjs list [--include-trashed true]
 `);
 }
 
@@ -76,7 +77,11 @@ async function ensureColumns(client) {
     alter table knowledge_nodes
       add column if not exists doc_markdown text,
       add column if not exists doc_hash text,
-      add column if not exists doc_synced_at timestamptz
+      add column if not exists doc_synced_at timestamptz,
+      add column if not exists is_trashed boolean not null default false,
+      add column if not exists trashed_at timestamptz,
+      add column if not exists trashed_parent_id text,
+      add column if not exists trash_tx_id text
   `);
 }
 
@@ -86,7 +91,7 @@ async function resolveRootId(client, parentId) {
   const result = await client.query(
     `
       with recursive chain as (
-        select id, parent_id from knowledge_nodes where id = $1
+        select id, parent_id from knowledge_nodes where id = $1 and coalesce(is_trashed, false) = false
         union all
         select n.id, n.parent_id
         from knowledge_nodes n
@@ -124,6 +129,15 @@ async function createNode(client, flags) {
 
   try {
     await client.query('begin');
+    if (flags['parent-id']) {
+      const parent = await client.query(
+        'select id from knowledge_nodes where id = $1 and coalesce(is_trashed, false) = false',
+        [flags['parent-id']],
+      );
+      if (parent.rowCount === 0) {
+        throw new Error(`父节点不存在或已在垃圾桶中: ${flags['parent-id']}`);
+      }
+    }
 
     const docPath = await resolveDocPath(client, flags);
     createdDocPath = docPath;
@@ -187,10 +201,13 @@ async function updateNode(client, flags) {
     throw new Error('update 需要 --id');
   }
 
-  const currentResult = await client.query('select id, doc_path from knowledge_nodes where id = $1', [flags.id]);
+  const currentResult = await client.query(
+    'select id, doc_path from knowledge_nodes where id = $1 and coalesce(is_trashed, false) = false',
+    [flags.id],
+  );
   const current = currentResult.rows[0];
   if (!current) {
-    throw new Error(`节点不存在: ${flags.id}`);
+    throw new Error(`节点不存在或已在垃圾桶中: ${flags.id}`);
   }
 
   let movedDoc = null;
@@ -261,9 +278,7 @@ async function updateNode(client, flags) {
   }
 }
 
-async function archiveDocsBeforeDelete(client, rootNodeId) {
-  const txId = `${new Date().toISOString().replace(/[:.]/g, '-')}-${Math.random().toString(16).slice(2, 8)}`;
-
+async function moveDocsToTrash(client, rootNodeId, txId) {
   const result = await client.query(
     `
       with recursive subtree as (
@@ -290,12 +305,12 @@ async function archiveDocsBeforeDelete(client, rootNodeId) {
       continue;
     }
 
-    const archiveRelative = path.join('_archive', txId, row.doc_path).replace(/\\/g, '/');
-    const archive = safeResolveDocPath(archiveRelative);
+    const trashRelative = path.join('_trash', txId, row.doc_path).replace(/\\/g, '/');
+    const trash = safeResolveDocPath(trashRelative);
 
-    await fs.mkdir(path.dirname(archive), { recursive: true });
-    await fs.rename(source, archive);
-    movedDocs.push({ source, archive, id: row.id });
+    await fs.mkdir(path.dirname(trash), { recursive: true });
+    await fs.rename(source, trash);
+    movedDocs.push({ source, trash, id: row.id });
   }
 
   return movedDocs;
@@ -306,7 +321,7 @@ async function restoreMovedDocs(movedDocs) {
     const moved = movedDocs[i];
     try {
       await fs.mkdir(path.dirname(moved.source), { recursive: true });
-      await fs.rename(moved.archive, moved.source);
+      await fs.rename(moved.trash, moved.source);
     } catch {
       // ignore restore errors
     }
@@ -318,24 +333,49 @@ async function deleteNode(client, flags) {
     throw new Error('delete 需要 --id');
   }
 
-  const currentResult = await client.query('select id from knowledge_nodes where id = $1', [flags.id]);
+  const currentResult = await client.query(
+    'select id from knowledge_nodes where id = $1 and coalesce(is_trashed, false) = false',
+    [flags.id],
+  );
   if (currentResult.rowCount === 0) {
-    throw new Error(`节点不存在: ${flags.id}`);
+    throw new Error(`节点不存在或已在垃圾桶中: ${flags.id}`);
   }
 
   const movedDocs = [];
+  const txId = `${new Date().toISOString().replace(/[:.]/g, '-')}-${Math.random().toString(16).slice(2, 8)}`;
 
   try {
     await client.query('begin');
 
-    const archived = await archiveDocsBeforeDelete(client, flags.id);
-    movedDocs.push(...archived);
+    const moved = await moveDocsToTrash(client, flags.id, txId);
+    movedDocs.push(...moved);
 
-    await client.query('delete from knowledge_nodes where id = $1', [flags.id]);
+    await client.query(
+      `
+        with recursive subtree as (
+          select id, parent_id
+          from knowledge_nodes
+          where id = $1
+          union all
+          select n.id, n.parent_id
+          from knowledge_nodes n
+          join subtree s on n.parent_id = s.id
+        )
+        update knowledge_nodes n
+        set
+          is_trashed = true,
+          trashed_at = now(),
+          trashed_parent_id = n.parent_id,
+          trash_tx_id = $2
+        where n.id in (select id from subtree)
+      `,
+      [flags.id, txId],
+    );
     await client.query('commit');
 
-    console.log(`✅ 已删除节点（含子树）: ${flags.id}`);
-    console.log(`✅ 已归档文档: ${movedDocs.length} 个`);
+    console.log(`✅ 已删除到垃圾桶（含子树）: ${flags.id}`);
+    console.log(`✅ 垃圾桶批次: ${txId}`);
+    console.log(`✅ 已移动文档到 _trash: ${movedDocs.length} 个`);
   } catch (error) {
     await client.query('rollback');
     await restoreMovedDocs(movedDocs);
@@ -343,15 +383,124 @@ async function deleteNode(client, flags) {
   }
 }
 
-async function listNodes(client) {
-  const result = await client.query(`
-    select id, label, parent_id, doc_path, sort_order
-    from knowledge_nodes
-    order by coalesce(parent_id, ''), sort_order, id
-  `);
+async function restoreNode(client, flags) {
+  if (!flags.id) {
+    throw new Error('restore 需要 --id');
+  }
+
+  const rootResult = await client.query(
+    'select id, parent_id, trash_tx_id from knowledge_nodes where id = $1 and coalesce(is_trashed, false) = true',
+    [flags.id],
+  );
+  const root = rootResult.rows[0];
+  if (!root) {
+    throw new Error(`节点不在垃圾桶中: ${flags.id}`);
+  }
+
+  if (root.parent_id) {
+    const parent = await client.query(
+      'select id from knowledge_nodes where id = $1 and coalesce(is_trashed, false) = true',
+      [root.parent_id],
+    );
+    if (parent.rowCount > 0) {
+      throw new Error(`父节点仍在垃圾桶中，请先恢复父节点: ${root.parent_id}`);
+    }
+  }
+
+  const movedDocs = [];
+
+  try {
+    await client.query('begin');
+
+    const subtree = await client.query(
+      `
+        with recursive subtree as (
+          select id, parent_id, doc_path, trash_tx_id
+          from knowledge_nodes
+          where id = $1
+          union all
+          select n.id, n.parent_id, n.doc_path, n.trash_tx_id
+          from knowledge_nodes n
+          join subtree s on n.parent_id = s.id
+        )
+        select id, doc_path, trash_tx_id
+        from subtree
+        where doc_path is not null and coalesce(trash_tx_id, '') <> ''
+      `,
+      [flags.id],
+    );
+
+    for (const row of subtree.rows) {
+      const source = safeResolveDocPath(path.join('_trash', row.trash_tx_id, row.doc_path).replace(/\\/g, '/'));
+      const target = safeResolveDocPath(row.doc_path);
+      try {
+        await fs.access(source);
+      } catch {
+        continue;
+      }
+      await fs.mkdir(path.dirname(target), { recursive: true });
+      await fs.rename(source, target);
+      movedDocs.push({ source, target });
+    }
+
+    await client.query(
+      `
+        with recursive subtree as (
+          select id
+          from knowledge_nodes
+          where id = $1
+          union all
+          select n.id
+          from knowledge_nodes n
+          join subtree s on n.parent_id = s.id
+        )
+        update knowledge_nodes n
+        set
+          is_trashed = false,
+          trashed_at = null,
+          trashed_parent_id = null,
+          trash_tx_id = null
+        where n.id in (select id from subtree)
+      `,
+      [flags.id],
+    );
+
+    await client.query('commit');
+    console.log(`✅ 已从垃圾桶恢复节点（含子树）: ${flags.id}`);
+    console.log(`✅ 已恢复文档: ${movedDocs.length} 个`);
+  } catch (error) {
+    await client.query('rollback');
+    for (let i = movedDocs.length - 1; i >= 0; i -= 1) {
+      const moved = movedDocs[i];
+      try {
+        await fs.mkdir(path.dirname(moved.source), { recursive: true });
+        await fs.rename(moved.target, moved.source);
+      } catch {
+        // ignore restore rollback errors
+      }
+    }
+    throw error;
+  }
+}
+
+async function listNodes(client, flags) {
+  const includeTrashed = toBooleanFlag(flags['include-trashed']);
+  const query = includeTrashed
+    ? `
+      select id, label, parent_id, doc_path, sort_order, is_trashed
+      from knowledge_nodes
+      order by is_trashed, coalesce(parent_id, ''), sort_order, id
+    `
+    : `
+      select id, label, parent_id, doc_path, sort_order, is_trashed
+      from knowledge_nodes
+      where coalesce(is_trashed, false) = false
+      order by coalesce(parent_id, ''), sort_order, id
+    `;
+  const result = await client.query(query);
 
   result.rows.forEach((row) => {
-    console.log([row.id, row.label, row.parent_id ?? '-', row.doc_path ?? '-', row.sort_order].join('\t'));
+    console.log([row.id, row.label, row.parent_id ?? '-', row.doc_path ?? '-', row.sort_order, row.is_trashed].join('\t'));
   });
 }
 
@@ -386,8 +535,13 @@ async function main() {
       return;
     }
 
+    if (command === 'restore') {
+      await restoreNode(client, flags);
+      return;
+    }
+
     if (command === 'list') {
-      await listNodes(client);
+      await listNodes(client, flags);
       return;
     }
 

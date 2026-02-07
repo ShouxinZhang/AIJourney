@@ -1,0 +1,9 @@
+# Local editor/database configs
+.vscode/database-client-config.json
+.vscode/mcp.json
+
+# Generated local trash files from knowledge CRUD
+/docs/knowledge/_trash/
+
+# Local dependencies for repo metadata tooling
+/scripts/repo-metadata/node_modules/

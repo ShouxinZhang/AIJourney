@@ -18,7 +18,13 @@
     "knowledge:sync": "node ./tools/knowledge-sync/scripts/sync-read-model.mjs",
     "knowledge:publish-read": "npm run knowledge:sync-md-to-db && npm run knowledge:sync",
     "knowledge:node": "node ./tools/knowledge-sync/scripts/crud-node.mjs",
-    "knowledge:doc": "node ./tools/knowledge-sync/scripts/crud-doc.mjs"
+    "knowledge:doc": "node ./tools/knowledge-sync/scripts/crud-doc.mjs",
+    "repo:scan": "node ../scripts/repo-metadata/scripts/scan.mjs",
+    "repo:scan-update": "node ../scripts/repo-metadata/scripts/scan.mjs --update",
+    "repo:crud": "node ../scripts/repo-metadata/scripts/crud.mjs",
+    "repo:generate-md": "node ../scripts/repo-metadata/scripts/generate-structure-md.mjs",
+    "repo:sync-to-db": "node ../scripts/repo-metadata/scripts/sync-json-to-postgres.mjs",
+    "repo:sync-from-db": "node ../scripts/repo-metadata/scripts/sync-to-json.mjs"
   },
   "dependencies": {
     "@xyflow/react": "^12.8.2",

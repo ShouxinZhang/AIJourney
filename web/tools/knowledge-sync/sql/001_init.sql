@@ -11,6 +11,10 @@ create table if not exists knowledge_nodes (
   doc_markdown text,
   doc_hash text,
   doc_synced_at timestamptz,
+  is_trashed boolean not null default false,
+  trashed_at timestamptz,
+  trashed_parent_id text,
+  trash_tx_id text,
   sort_order integer not null default 0,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
@@ -18,6 +22,7 @@ create table if not exists knowledge_nodes (
 );
 
 create index if not exists idx_knowledge_nodes_parent on knowledge_nodes(parent_id, sort_order, id);
+create index if not exists idx_knowledge_nodes_trashed on knowledge_nodes(is_trashed, trashed_at);
 
 create table if not exists knowledge_dependencies (
   source_id text not null references knowledge_nodes(id) on delete cascade,
