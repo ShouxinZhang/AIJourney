@@ -61,19 +61,17 @@ export default function KnowledgeGraphFeature() {
   useEffect(() => {
     if (!contextMenu) return undefined;
 
-    const onGlobalClick = () => setContextMenu(null);
+    const onGlobalMouseDown = () => setContextMenu(null);
     const onEsc = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setContextMenu(null);
       }
     };
 
-    window.addEventListener('click', onGlobalClick);
-    window.addEventListener('contextmenu', onGlobalClick);
+    window.addEventListener('mousedown', onGlobalMouseDown);
     window.addEventListener('keydown', onEsc);
     return () => {
-      window.removeEventListener('click', onGlobalClick);
-      window.removeEventListener('contextmenu', onGlobalClick);
+      window.removeEventListener('mousedown', onGlobalMouseDown);
       window.removeEventListener('keydown', onEsc);
     };
   }, [contextMenu]);
@@ -128,6 +126,7 @@ export default function KnowledgeGraphFeature() {
   const handleRowContextMenu = useCallback((event: MouseEvent<HTMLButtonElement>, row: FolderRow) => {
     if (!isLocalEditable) return;
     event.preventDefault();
+    event.stopPropagation();
     setSelectedNodeId(row.id);
     setContextMenu({
       x: event.clientX,
